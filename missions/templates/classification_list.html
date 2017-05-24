@@ -1,0 +1,236 @@
+{% extends 'base.html' %}
+
+{% comment %}
+# Copyright 2017 Lockheed Martin Corporation
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#     http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+#
+{% endcomment %}
+
+{% load bootstrap3 %}
+{% block title %}Classification Legend Update{% endblock %}
+
+{% block extra_nav_bar_content_right %}
+<li class="">
+        <a href="{% url 'update-settings' %}">System Settings</a>
+</li>
+{% endblock %}
+
+{% block main_heading %}
+<h1 class="page-header">Classification Legend Update<div style="float:right"><button class="btn btn-primary" onclick="addNewClassificationRow()">{% bootstrap_icon "plus" %} Add New</button></div></h1>
+{% endblock %}
+{% block content %}
+
+<div class="clearfix">&nbsp;</div>
+<table class="table table-hover table-bordered table-striped table-responsive" id="classification-legend-list">
+    <tr>
+        <th>Verbose Legend</th>
+        <th>Short Legend</th>
+        <th>Text Color</th>
+        <th>Background Color</th>
+        <th>Report Label Color</th>
+        <th>Actions</th>
+    </tr>
+
+    {% for class in object_list %}
+        <tr id="row-id-{{class.id}}" data-url="{% url 'update-classification' pk=class.id %}">
+            <td>
+                <span class="cell-content">{{ class.verbose_legend }}</span>
+                <input type="text" class="hide form-control" data-key="verbose_legend" value="{{ class.verbose_legend }}" />
+            </td>
+            <td>
+                <span class="cell-content">{{ class.short_legend }}</span>
+                <input type="text" class="hide form-control" data-key="short_legend" value="{{ class.short_legend }}" />
+            </td>
+            <td>
+                <span class="cell-content">{{ class.text_color }}</span>
+                {# Autocomplete attribute required for FF compatibility 8-( #}
+                <select id="text-color-select-{{class.id}}" class="hide form-control" data-key="text_color" autocomplete="off">
+                    {% for color in available_colors %}
+                        {% if class.text_color.id == color.id %}
+                            <option selected="selected" value="{{color.id}}">{{ color }}</option>
+                        {% else %}
+                            <option value="{{color.id}}">{{ color }}</option>
+                        {% endif %}
+                    {% endfor %}
+                </select>
+            </td>
+            <td>
+                <span class="cell-content">{{ class.background_color }}</span>
+                <select id="background-color-select-{{class.id}}" class="hide form-control" data-key="background_color" autocomplete="off">
+                    {% for color in available_colors %}
+                        {% if class.background_color.id == color.id %}
+                            <option selected="selected" value="{{color.id}}">{{ color }}</option>
+                        {% else %}
+                            <option value="{{color.id}}">{{ color }}</option>
+                        {% endif %}
+                    {% endfor %}
+                </select>
+            </td>
+            <td>
+                <span class="cell-content">{{ class.get_report_label_color_selection_display }}</span>
+                    <select id="report-label-color-select-{{class.id}}" class="hide form-control" data-key="report_label_color_selection" autocomplete="off">
+                    {% if class.report_label_color_selection == 'T' %}
+                        <option selected="selected" value="T">Text</option>
+                        <option value="B">Back</option>
+                    {% else %}
+                        <option value="T">Text</option>
+                        <option selected="selected" value="B">Back</option>
+                    {% endif %}
+                </select>
+            </td>
+            <td>
+                <span id="edit-classification-{{class.id}}" onclick="beginClassificationUpdate('{{class.id}}', '{% url 'update-classification' pk=class.id %}')">{% bootstrap_icon "pencil" %}</span>&nbsp;
+                <span onclick="deleteClassification('{% url 'update-classification' pk=class.id %}')">{% bootstrap_icon "trash" %}</span><br />
+            </td>
+        </tr>
+    {% endfor %}
+</table>
+
+<script type="text/javascript">
+    function deleteClassification(url) {
+        $.ajax({
+                url: url,
+                method: "DELETE",
+                success: function(data, textStatus, jqXHR) {
+                    if (!data.success) {
+                        alert(data.message);
+                    }
+                    window.location.reload();
+                }
+             }
+        );
+    }
+
+    function beginClassificationUpdate(id, url) {
+        var jqObj = $('#row-id-' + id)
+        jqObj.find(".form-control, .cell-content").toggleClass("hide");
+    }
+
+    function updateClassification($row) {
+        var url = $row.data("url");
+
+        var values = {};
+
+        values.verbose_legend = $row.find("input[data-key='verbose_legend']").first().val();
+        values.short_legend = $row.find("input[data-key='short_legend']").first().val();
+
+        var text_color_select = $row.find("select[data-key='text_color']").first()[0];
+        values.text_color = text_color_select.options[text_color_select.selectedIndex].value;
+
+        var background_color_select = $row.find("select[data-key='background_color']").first()[0];
+        values.background_color = background_color_select.options[background_color_select.selectedIndex].value;
+
+        var report_label_color_select = $row.find("select[data-key='report_label_color_selection']").first()[0];
+        values.report_label_color_selection = report_label_color_select.options[report_label_color_select.selectedIndex].value;
+
+        $.ajax({
+            url: url,
+            method: "POST",
+            data: JSON.stringify(values),
+            success: function (data, textStatus, jqXHR) {
+                if (!data.success) {
+                    alert(data.message);
+                }
+                else {
+                    window.location.reload();
+                }
+            }
+        });
+    }
+
+    function addNewClassificationRow() {
+        var jqTable = $("#classification-legend-list");
+
+        var row = $("<tr/>")
+            .attr("id", "row-id-0")
+            .attr("data-url", "{% url 'update-classification' %}");
+
+        var verbose_legend_col = $("<td></td>");
+        var verbose_legend_input = $("<input type='text'>")
+            .addClass("form-control")
+            .attr("data-key", "verbose_legend");
+        verbose_legend_col.append(verbose_legend_input);
+
+        var short_legend_col = $("<td></td>");
+        var short_legend_input = $("<input type='text'>")
+            .addClass("form-control")
+            .attr("data-key", "short_legend");
+        short_legend_col.append(short_legend_input);
+
+        var text_color_col = $("<td></td>");
+        var text_color_select = $("<select>")
+            .attr("id", uuid4())
+            .addClass("form-control")
+            .attr("data-key", "text_color")
+            .attr("autocomplete", "off");
+        {% for color in available_colors %}
+            var temp_id = uuid4();
+            var temp_id = $("<option></option>")
+                .val("{{color.id}}")
+                .text("{{color}}");
+            text_color_select.append(temp_id);
+        {% endfor %}
+        text_color_col.append(text_color_select);
+
+        var background_color_col = $("<td></td>");
+        var background_color_select = $("<select>")
+            .attr("id", uuid4())
+            .addClass("form-control")
+            .attr("data-key", "background_color")
+            .attr("autocomplete", "off");
+        {% for color in available_colors %}
+            var temp_id = uuid4();
+            var temp_id = $("<option></option>")
+                .val("{{color.id}}")
+                .text("{{color}}");
+            background_color_select.append(temp_id);
+        {% endfor %}
+        background_color_col.append(background_color_select);
+
+        var report_label_color_col = $("<td></td>");
+        var report_label_color_select = $("<select>")
+            .attr("id", uuid4())
+            .addClass("form-control")
+            .attr("data-key", "report_label_color_selection")
+            .attr("autocomplete", "off");
+        var text_option = $("<option></option>")
+            .val("T")
+            .text("Text");
+        report_label_color_select.append(text_option);
+        var background_option = $("<option></option>")
+            .val("B")
+            .text("Back");
+        report_label_color_select.append(background_option);
+        report_label_color_col.append(report_label_color_select);
+
+        jqTable.append(row);
+        row.append(verbose_legend_col);
+        row.append(short_legend_col);
+        row.append(text_color_col);
+        row.append(background_color_col);
+        row.append(report_label_color_col);
+
+    }
+
+$(function() {
+    $("#classification-legend-list").on("keyup", ".form-control", function(event) {
+        /* On enter, update the classification */
+        if (event.keyCode == 13) {
+            updateClassification($(this).closest("tr"));
+        }
+    });
+});
+</script>
+
+{% endblock %}

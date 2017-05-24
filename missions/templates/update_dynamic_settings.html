@@ -1,0 +1,48 @@
+{% extends 'base.html' %}
+
+{% comment %}
+# Copyright 2017 Lockheed Martin Corporation
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#     http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+#
+{% endcomment %}
+
+{% load bootstrap3 %}
+
+{% block title %}
+    DART Dynamic System Settings
+{% endblock %}
+
+{% block main_heading %}
+    <h1 class="page-header">
+        DART Dynamic System Settings
+    </h1>
+{% endblock %}
+
+{% block content %}
+<form method="POST" enctype="multipart/form-data">
+{% csrf_token %}
+{% bootstrap_form form %}
+    <div class="btn-group btn-group-justified" role="group">
+        <a id="business-area-update-button" class="btn btn-default" href="{% url 'list-business-areas' %}">Edit Business Areas</a>
+        <a id="classification-update-button" class="btn btn-default" href="{% url 'list-classifications' %}">Edit Classifications</a>
+        <a id="color-update-button" class="btn btn-default" href="{% url 'list-colors' %}">Edit Colors</a>
+    </div>
+    <br /><br />
+{% buttons %}
+    <button type="submit" class="btn btn-primary">
+        {% bootstrap_icon "star" %} Submit
+    </button>
+{% endbuttons %}
+</form>
+{% endblock %}

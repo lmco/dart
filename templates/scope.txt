@@ -1,0 +1,1 @@
+Discuss the scope of what the testing entails, assets that are in scope, architecture diagrams etc.

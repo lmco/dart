@@ -1,0 +1,61 @@
+{% extends 'base.html' %}
+
+{% comment %}
+# Copyright 2017 Lockheed Martin Corporation
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#     http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+#
+{% endcomment %}
+
+{% load bootstrap3 %}
+{% load static %}
+
+{% block title %}
+    Application Use Agreement
+{% endblock %}
+
+{% block main_heading %}
+<h1 class="page-header">
+    System Access Notice
+</h1>
+{% endblock %}
+
+{% block content %}
+<div class="panel panel-primary">
+    <div class="panel-heading">System Access Notice</div>
+    <div class="panel-body">
+        {% comment %}
+        {# Fun fact: If you remove the surrounding comment tags, this is a great place to put your company logo. #}
+            <p align="center"><img src="#" width="50%"/></p>
+        {% endcomment %}
+        <p>You must accept the following items to use this application.</p>
+        <ol>
+            <li>Use of this application is governed by the organization granting access to the system.</li>
+        </ol>
+        <p><em>If you do not agree to any of the above items you may not use this application.</em></p>
+    </div>
+    <div class="panel-footer">
+        <form method="POST">
+            {% csrf_token %}
+            <button type="submit" value="submit" class="btn btn-primary">
+                {% bootstrap_icon "ok" %} I Agree
+            </button>
+            <a href="{% url 'logout' %}" class="btn btn-danger" title=":-(">
+                {% bootstrap_icon "remove" %} I Do Not Agree
+            </a>
+        </form>
+    </div>
+
+</div>
+
+{% endblock %}

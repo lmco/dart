@@ -1,0 +1,57 @@
+{% extends 'base.html' %}
+
+{% comment %}
+# Copyright 2017 Lockheed Martin Corporation
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#     http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+#
+{% endcomment %}
+
+
+{% load bootstrap3 %}
+
+{% block title %}
+    About DART
+{% endblock %}
+
+{% block main_heading %}
+    <h1 class="page-header">
+        About DART
+    </h1>
+{% endblock %}
+
+{% block content %}
+<h2>What is it?</h2>
+<p>DART is a tool created by the Lockheed Martin Red Team to document and report results from penetration tests, particularly in isolated network environments.</p>
+
+<h2>Who created it?</h2>
+<p>
+    Everyone on the Lockheed Martin Red Team has contributed to this tool - through development, ideas, and "hey wouldn't it be cool if..." feature requests.
+    It has been tailored to support the Red Team testing best practices created at Lockheed Martin for internal testing and external testing such as at the National Cyber Range.
+</p>
+<p>
+    The following individuals have gone above and beyond to contribute to the creation and development of this tool:
+</p>
+<ul>
+    <li>Dan McGowan</li>
+    <li>Sharif Hassan</li>
+    <li>Roy Ganesh</li>
+    <li>Chris Werner</li>
+    <li>Shaun Walmsley</li>
+</ul>
+
+<h2>Where can I get it?</h2>
+<p>
+    You can download DART on <a href="https://www.github.com/lmco/dart" target="_blank">GitHub</a>
+</p>
+{% endblock %}

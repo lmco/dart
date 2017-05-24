@@ -1,0 +1,16 @@
+[
+  {
+    "fields": {
+      "name": "HQ"
+    },
+    "model": "missions.businessarea",
+    "pk": 1
+  },
+  {
+    "fields": {
+      "name": "Corporate"
+    },
+    "model": "missions.businessarea",
+    "pk": 2
+  }
+]

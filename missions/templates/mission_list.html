@@ -1,0 +1,60 @@
+{% extends 'base.html' %}
+
+{% comment %}
+# Copyright 2017 Lockheed Martin Corporation
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#     http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+#
+{% endcomment %}
+
+{% load bootstrap3 %}
+{% block title %}Missions{% endblock %}
+
+{% block extra_nav_bar_content_right %}
+<li class="">
+        <a href="{% url 'update-settings' %}">System Settings</a>
+</li>
+{% endblock %}
+
+{% block main_heading %}
+<h1 class="page-header">Mission List <div style="float:right"><a href="{% url 'missions-new' %}" class="btn btn-primary">{% bootstrap_icon "plus" %} Add New</a></div></h1>
+{% endblock %}
+{% block content %}
+
+<div class="clearfix">&nbsp;</div>
+<table class="table table-hover table-bordered table-striped table-responsive">
+    <tr>
+        <th> </th>
+        <th>Mission Name</th>
+        <th>Mission #</th>
+        <th>Business Area</th>
+        <th>Actions</th>
+    </tr>
+
+    {% for m in missions %}
+        <tr>
+            <td><a href="{% url 'missions-edit' pk=m.id %}">{% bootstrap_icon "edit" %} Edit</a></td>
+            <td>{{ m.mission_name }}</td>
+            <td>{{ m.mission_number }}</td>
+            <td>{{ m.business_area }}</td>
+            <td>
+                <a href="{% url 'mission-tests' mission=m.id %}">{% bootstrap_icon "stats" %} Test Cases</a><br />
+                <a href="{% url 'mission-hosts' mission_id=m.id %}">{% bootstrap_icon "hdd" %} Mission Hosts</a><br />
+                <a href="{% url 'mission-report' mission=m.id %}">{% bootstrap_icon "file" %} Generate Report</a><br />
+                <a href="{% url 'mission-attachments' mission=m.id %}">{% bootstrap_icon "gift" %} Generate Data Package</a>
+            </td>
+        </tr>
+    {% endfor %}
+</table>
+    {% bootstrap_pagination missions size="medium" %}
+{% endblock %}

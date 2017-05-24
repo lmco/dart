@@ -1,0 +1,149 @@
+{% comment %}
+# Copyright 2017 Lockheed Martin Corporation
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#     http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+#
+{% endcomment %}
+
+{% load bootstrap3 %}
+{% load dart_bootstrap_formatting_helpers %}
+{% load quickparts %}
+
+<!-- Hosts Modal -->
+<div class="modal fade" id="editMissionHostsModal" tabindex="-1" role="dialog" aria-labelledby="editMissionHostsModalTitle">
+  <div class="modal-dialog modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header" style="background-color: rgb(136, 17, 17); color: #ccc;">
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+        <h4 class="modal-title" id="editMissionHostsModalTitle">Add/Edit Host</h4>
+          <small>Press enter to add/edit host and clear the input form</small>
+      </div>
+      <div id="editMissionHostsModalBody" class="modal-body">
+          {% preloader "center" %}
+          <form class="form-inline">
+              <input type="text" class="hide" hidden="true" id="hostId" value="0">
+              <div class="form-group">
+                <label for="hostName">Host Name</label>
+                <input type="text" class="form-control" id="hostName" placeholder="Host Name">
+              </div>
+              <div class="form-group">
+                <label for="hostIP">IP</label>
+                <input type="text" class="form-control" id="hostIP" placeholder="127.0.0.1">
+              </div>
+              <div class="checkbox">
+                <label>
+                  <input type="checkbox" id="isNoHit"> Is No Hit
+                </label>
+              </div>
+          <button type="button" class="btn btn-default pull-right" id="saveHostBtn">Save</button>
+          </form>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-default" data-dismiss="modal">Done</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script type="text/javascript">
+
+function getHostData(host_id) {
+
+    $.get("{% url 'host-detail' host_id=0 %}".slice(0, -1) + host_id + "/",
+        function(data, status, xhr) {
+            $("#hostId").val(data.data['id']);
+            $("#hostName").val(data.data['host_name']);
+            $("#hostIP").val(data.data['ip_address']);
+            if (data.data['is_no_hit'] === true) {
+                $("#isNoHit").prop("checked", true);
+            } else {
+                $("#isNoHit").prop("checked", false);
+            }
+        }
+    );
+}
+
+function addMissionHost(host_id, host_name, ip_address, is_no_hit) {
+    $.post("{% url 'host-detail' host_id=0 %}".slice(0, -1) + host_id + "/",
+        JSON.stringify({"host_name": host_name, "ip_address": ip_address, "is_no_hit": is_no_hit, "mission_id": {{mission_id}}}),
+        function(data, status, xhr) {
+            console.log(data);
+            $("#hostId").val("0");
+            $("#hostName").val("");
+            $("#hostIP").val("");
+            $("#isNoHit").prop("checked", false);
+            $("#hostName").focus();
+        }
+    );
+}
+
+function removeMissionHost(host_id) {
+    $.ajax({
+        url: "{% url 'host-detail' host_id=0 %}".slice(0, -1) + host_id + "/",
+        type: "DELETE",
+        data: {},
+        success: function(data, status, xhr) {
+            console.log(data);
+            window.location.reload(false);
+        }
+    });
+}
+
+$('#editMissionHostsModal').on('show.bs.modal', function (event) {
+    console.log("loading editMissionHostsModal");
+    var target = $(event.relatedTarget);
+    var action = target.data('tgt');
+
+    if (action !== 'new') {
+        getHostData(action);
+    } else {
+        $("#hostId").val("0");
+        $("#hostName").val("");
+        $("#hostIP").val("");
+        $("#isNoHit").prop("checked", false);
+    }
+
+    $('.preloader').addClass('hidden');
+
+});
+
+$('#editMissionHostsModal').on('shown.bs.modal', function (event) {
+    $("#hostName").focus();
+});
+
+$('#editMissionHostsModal').on('hide.bs.modal', function (event) {
+    window.location.reload(false);
+});
+
+$("input").on("keypress", function(event) {
+   if (event.keyCode == 13) {
+        host_id = $("#hostId").val();
+        host_name = $("#hostName").val();
+        ip_address = $("#hostIP").val();
+        is_no_hit = $("#isNoHit").prop("checked");
+        addMissionHost(host_id, host_name, ip_address, is_no_hit);
+        return false;
+   }
+});
+
+$("#saveHostBtn").on("click", function(event) {
+    host_id = $("#hostId").val();
+    host_name = $("#hostName").val();
+    ip_address = $("#hostIP").val();
+    is_no_hit = $("#isNoHit").prop("checked");
+    addMissionHost(host_id, host_name, ip_address, is_no_hit);
+});
+
+</script>
+
+<!-- End Hosts Modal -->

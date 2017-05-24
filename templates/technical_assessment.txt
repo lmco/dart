@@ -1,0 +1,5 @@
+Discuss how team was connected to the environment to execute the testing, the target architecture a bit, etc. Include diagrams if possible.
+
+The physical architecture used to execute all tests is defined by the diagram shown below:
+
+<Insert diagram if possible>

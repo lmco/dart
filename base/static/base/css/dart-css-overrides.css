@@ -1,0 +1,115 @@
+/*
+# Copyright 2017 Lockheed Martin Corporation
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#     http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+#
+*/
+
+.navbar-inverse {
+    background: #881111;
+    border-color: #fff;
+}
+
+.navbar-inverse .navbar-brand {
+    color: #ccc;
+}
+
+.navbar-inverse .navbar-nav > li > a {
+    color: #ccc;
+}
+
+/* Style overrides, mostly for  clickable icons */
+table a {
+    color: rgb(51, 51, 51);
+}
+table a:hover {
+    color: rgb(51, 51, 51);
+    text-decoration: none;
+}
+
+.required::before {
+    content: "*";
+}
+
+/* Styles for Class Legend */
+.classification-legend-top {
+    width:100%;
+    height:20px;
+    text-align: center;
+    font-weight: bold;
+}
+
+.classification-legend-bottom {
+    position:fixed;
+    bottom:0;
+    width:100%;
+    height:20px;
+    text-align: center;
+    font-weight: bold;
+}
+
+.lm-prop-legend-top {
+    background: #002F6C;
+    color: #FFF;
+    width:100%;
+    height:20px;
+    text-align: center;
+    font-weight: bold;
+}
+
+.lm-prop-legend-bottom {
+    background: #002F6C;
+    color: #FFF;
+    position:fixed;
+    bottom:20px;
+    width:100%;
+    height:20px;
+    text-align: center;
+    font-weight: bold;
+}
+
+.page-header {
+    margin-top: 60px;
+}
+
+/* Edit Hosts Modal Styles */
+
+.drop-container {
+    min-height: 50px;
+    background: #EEE;
+    z-index: 2000;
+}
+
+.drop-container > div {
+    z-index: 2010;
+}
+
+#source-container > div {
+    background-color: rgb(242, 222, 222);
+    color: rgb(51, 51, 51);
+}
+
+#available-container > div {
+    background-color: rgb(252, 248, 227);
+    color: rgb(51, 51, 51);
+}
+
+#target-container > div {
+    background-color: rgb(223, 240, 216);
+    color: rgb(51, 51, 51);
+}
+
+/* Footer style shim for classification legend */
+footer {
+    height: 80px;
+}

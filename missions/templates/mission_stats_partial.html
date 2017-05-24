@@ -1,0 +1,103 @@
+{% comment %}
+# Copyright 2017 Lockheed Martin Corporation
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#     http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+#
+{% endcomment %}
+
+{% if analytics.count_of_test_cases != 0 %}
+    <ul class="list-group">
+        <li class="list-group-item">
+            Total Test Cases in Report
+            <span class="badge">{{analytics.count_of_test_cases}}</span>
+        </li>
+        <li class="list-group-item"
+            title="Test Result != Not Run">
+            Test Cases Run or Cancelled
+            <span class="badge">{{analytics.count_of_executed_test_cases}}</span>
+        </li>
+        <li class="list-group-item"
+            title="TCs Run or Cancelled / Total TCs">
+            Mission Execution Completion
+            <span class="badge">{{analytics.mission_execution_percentage}}</span>
+        </li>
+        <li class="list-group-item"
+            title="Status == Final">
+            Test Cases Approved / Final
+            <span class="badge">{{analytics.count_of_test_cases_approved}}</span>
+        </li>
+        <li class="list-group-item"
+            title="TCs in Review or Final / Total TCs">
+            Overall Mission Completion
+            <span class="badge">{{analytics.mission_completion_percentage}}</span>
+        </li>
+        <li class="list-group-item"
+            title="TCs with content in Findings">
+            Test Cases w/Findings
+            <span class="badge">{{analytics.count_of_findings}}</span>
+        </li>
+        <li class="list-group-item"
+            title="Aggregate Test Case Results">
+            Test Case Results
+            <table class="table  table-responsive center">
+                <thead>
+                    <tr>
+                        {% for result_text in analytics.count_of_test_cases_by_result|first %}
+                            <th style="text-align: center;">{{ result_text }}</th>
+                        {% endfor %}
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for row in analytics.count_of_test_cases_by_result|slice:"1:" %}
+                        <tr>
+                            {% for col in row %}
+                                <td style="text-align: center;">{{ col }}</td>
+                            {% endfor %}
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </li>
+        <li class="list-group-item"
+            title="Based on Attack Date and a Mon-Sun week. Only counts test cases with a final test result other than 'Not Run'">
+            Test Cases Executed Per Mission Week
+            {% if analytics.count_of_executed_test_cases == 0 %}
+            <span class="badge">{{ analytics.count_of_test_case_types_by_mission_week|first|first }}</span>
+            {% else %}
+            <table class="table  table-responsive">
+                <thead>
+                    <tr>
+                        <th>&nbsp;</th>
+                        {% for i in analytics.count_of_test_case_types_by_mission_week|first|slice:"1:" %}
+                            <th>Week {{ forloop.counter }}</th>
+                        {% endfor %}
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for row in analytics.count_of_test_case_types_by_mission_week %}
+                        <tr>
+                            {% for col in row %}
+                                <td>{{ col }}</td>
+                            {% endfor %}
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+            {% endif %}
+        </li>
+    </ul>
+  {% else %}
+  <p>I'm sure you meant to add some test cases to your report before you clicked me.</p>
+  <p>Don't worry, I won't tell the others.</p>
+  {% endif %}
+  

@@ -1,0 +1,54 @@
+{% extends 'base.html' %}
+
+{% comment %}
+# Copyright 2017 Lockheed Martin Corporation
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#     http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+#
+{% endcomment %}
+
+{% load bootstrap3 %}
+{% block title %}
+    {% if supportingdata.pk %}
+        Edit Data
+    {% else %}
+        Add Data
+    {% endif %}
+{% endblock %}
+{% block main_heading %}
+    <h1 class="page-header">
+    {% if supportingdata.pk %}
+        Edit
+    {% else %}
+        Add
+    {% endif %}
+    Data for Test {{this_test.test_objective}}</h1>
+    <p>
+        <a href="{% url 'test-data-list' mission=this_mission.id test_detail=this_test.id%}">&lt;&lt; Back to Data List</a>
+    </p>
+{% endblock %}
+
+{% block content %}
+<form action="{{ action }}" method="POST" enctype="multipart/form-data">
+{% csrf_token %}
+{% bootstrap_form form %}
+{% buttons %}
+    <button type="submit" class="btn btn-primary">
+        {% bootstrap_icon "star" %} Submit
+    </button>
+    {% if supportingdata.pk %}
+		<a class="btn btn-danger" href="{% url 'test-data-delete' mission=this_mission.id test_detail=this_test.id pk=supportingdata.pk %}">{% bootstrap_icon "trash" %} Delete</a>
+    {% endif %}
+{% endbuttons %}
+</form>
+{% endblock %}

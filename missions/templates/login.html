@@ -1,0 +1,45 @@
+{% extends "base.html" %}
+
+{% comment %}
+# Copyright 2017 Lockheed Martin Corporation
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#     http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+#
+{% endcomment %}
+
+{% block additional_head_content %}
+    {% if user.is_authenticated %}
+        <meta http-equiv="refresh" content="0;URL='{% url 'missions-list' %}'" />
+    {% endif %}
+{% endblock %}
+
+{% block title %}
+Login
+{% endblock %}
+
+{% block main_heading %}
+<h1 class="page-header">
+    Welcome to DART
+</h1>
+{% endblock %}
+
+{% block content %}
+<p>Login above to continue.</p>
+<p>If you are having trouble logging in or need to create your initial system account, please
+  <a href="{% url 'create-account' %}">click here</a>.
+</p>
+
+<script type="text/javascript">
+document.getElementById('id_username').focus()
+</script>
+{% endblock %}

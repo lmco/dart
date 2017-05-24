@@ -1,0 +1,72 @@
+{% extends 'base.html' %}
+
+{% comment %}
+# Copyright 2017 Lockheed Martin Corporation
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#     http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+#
+{% endcomment %}
+
+{% load bootstrap3 %}
+{% load static %}
+
+{% block title %}
+    Account Creation
+{% endblock %}
+
+{% block main_heading %}
+<h1 class="page-header">
+    {% if any_accounts_configured %}
+    Account Help
+    {% else %}
+    Account Creation
+    {% endif %}
+</h1>
+{% endblock %}
+
+{% block content %}
+{% if any_accounts_configured %}
+    <div class="panel panel-primary">
+        <div class="panel-heading">Forgotten Credentials Assistance</div>
+        <div class="panel-body">
+            <p>If you have forgotten your credentials you will be unable to access the web page until you have
+            removed all user accounts (which will allow you to create a new user using this page).
+            Don't fret, your mission data will be preserved.</p>
+            <h3>Removing All User Accounts</h3>
+            <ol>
+                <li>Execute the following command from the DART directory:<br>
+                    <code>python manage.py removeallusers</code>
+                </li>
+            </ol>
+        </div>
+
+
+    </div>
+{% else %}
+        <div class="panel panel-primary">
+            <div class="panel-heading">Create an Account</div>
+            <div class="panel-body">
+                <p>It looks like you're the first user here, go ahead and enter some credentials to get started!</p>
+                <form method="POST">
+                    {% csrf_token %}
+                    <input type="text" id="username" name="username" class="form-control" placeholder="Username"
+                           required="" autofocus="">
+                    <input type="password" id="password" name="password" class="form-control" placeholder="Password"
+                           required="">
+                    <br />
+                    <button class="btn btn-lg btn-primary btn-block" type="submit">Create Account</button>
+                </form>
+            </div>
+        </div>
+{% endif %}
+{% endblock %}

@@ -1,0 +1,168 @@
+{% extends 'base.html' %}
+
+{% comment %}
+# Copyright 2017 Lockheed Martin Corporation
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#     http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+#
+{% endcomment %}
+
+{% load bootstrap3 %}
+{% load quickparts %}
+
+{% block title %}
+    {% if this_mission and testdetail.pk > 0 %}
+        {% if is_read_only %}
+            Review Test
+        {% else %}
+            Edit Test
+        {% endif %}
+    {% else %}
+        Add Test
+    {% endif %}
+{% endblock %}
+
+{% if testdetail.pk > 0 %}
+    {% block extra_nav_bar_content_right %}
+        {% if is_read_only %}
+            <li class="">
+                <button
+                        type="button"
+                        class="btn btn-default navbar-btn"
+                        title="Edit"
+                        onclick="javascript:document.location = appendScrollPositionToUrl('{% url 'mission-test-edit' pk=testdetail.pk mission=this_mission.id %}')">
+                    {% bootstrap_icon "edit" %}
+                </button>&nbsp;
+
+            </li>
+        {% elif this_mission and testdetail.pk > 0 %}
+            <li class="">
+                <button
+                        type="button"
+                        class="btn btn-default navbar-btn"
+                        title="Review"
+                        onclick="javascript:document.location = appendScrollPositionToUrl('{% url 'mission-test-view' pk=testdetail.pk mission=this_mission.id %}')">
+                    {% bootstrap_icon "eye-open" %}
+                </button>&nbsp;
+
+            </li>
+        {% endif %}
+
+        {% if this_mission and testdetail.pk > 0 %}
+            <li class="">
+                {% manage_data_button this_mission.id testdetail.pk testdetail.count_of_supporting_data as_button=True %}
+            </li>
+        {% endif %}
+    {% endblock %}
+{% endif %}
+
+{% block main_heading %}<h1 class="page-header">
+    {% if this_mission and testdetail.pk > 0 %}
+        {% if is_read_only %}
+            Review Test
+        {% else %}
+            Edit Test
+        {% endif %}
+        {{testdetail.pk}} ({{testdetail.test_objective}}) {{object.pk}}
+    {% else %}
+        Add Test for {{this_mission}}
+    {% endif %}</h1>
+    <p><a href="{% url 'mission-tests' mission=this_mission.id %}">&lt;&lt; Back to Tests</a></p>
+{% endblock %}
+
+{% block content %}
+{% if this_mission and testdetail.pk > 0 %}
+    {% include 'modals/edit_testhosts_modal.html' with mission_id=this_mission.pk test_id=testdetail.pk %}
+{% endif %}
+
+<form id="test-case-form" action="{{ action }}" method="POST" autocomplete="off" class="navbar-submittable-form">
+{% csrf_token %}
+
+    {% for field in form %}
+        {% bootstrap_field field %}
+
+        {% if field.name == 'test_description_include_flag' %}
+        {# Render block after assumptions_include_flag for source & target hosts #}
+            {% if this_mission and testdetail.pk > 0 %}
+                {% include "edit_testhosts_partial.html" %}
+            {% else %}
+                <div>Test case must be saved before source and target hosts can be added.</div>
+            {% endif %}
+        {% endif %}
+    {% endfor %}
+
+{% buttons %}
+    <button type="submit" class="btn btn-primary" id="submit-btn">
+        {% bootstrap_icon "star" %} Submit
+    </button>
+	{% if testdetail.pk %}
+		<a class="btn btn-danger" href="{% url 'mission-test-delete' mission=this_mission.id pk=testdetail.pk %}">{% bootstrap_icon "trash" %} Delete</a>
+	{% endif %}
+{% endbuttons %}
+</form>
+
+<script type="text/javascript">
+    /* Toggle between read_only & edit while maintaining scroll position */
+
+    function appendScrollPositionToUrl(url) {
+        return url + "?scrollPos=" + $(window).scrollTop();
+    }
+    {% if scrollPos %}
+        $(document).ready( function() {
+            $(window).scrollTop({{ scrollPos }});
+        });
+    {% endif %}
+</script>
+
+<script type="text/javascript">
+    $(document).ready( function() {
+
+        /*
+        *   If attempting to edit a TC that has status "in work", display warning alert
+        */
+        {% if this_mission and testdetail.pk > 0 and testdetail.test_case_status == 'IN_WORK' and not is_read_only %}
+            msg = "This test case is currently marked as in work.\n\n";
+            msg += "Please confirm you are the only one working it to avoid data loss.";
+            confirm_continue = confirm(msg);
+
+            if (!confirm_continue) {
+                window.location.assign("{% url 'mission-tests' mission=this_mission.id %}");
+            }
+        {% endif %}
+
+        /*
+        *   Disable and replace submit buttons if the TC is in read-only mode
+        */
+        {% if is_read_only %}
+            $('#test-case-form :input').attr('readonly', 'true');
+            $('#test-case-form :checkbox, #test-case-form select').attr('disabled', 'true');
+            var readOnlyButtonHtml = '<button type="button" class="btn btn-default navbar-btn" disabled>{% bootstrap_icon "star" %} Read Only</button>';
+            $('#navbar-form-submit-button').html(readOnlyButtonHtml);
+            $('#submit-btn').parent().html(readOnlyButtonHtml);
+            $('form a').remove();
+        {% endif %}
+
+        /*
+        *   Reminder to verify the TC timestamp whenever changing status to review or final
+        */
+        $("#id_test_case_status").on("change", function( event ) {
+            if ( event.target.value === "FINAL" || event.target.value === "REVIEW" ) {
+                alert("The execution time for this test case is recorded as:\n\n" +
+                $("#id_attack_time_date").attr("value") +
+                "\n\nIf this is not correct, please update it now.");
+            }
+        });
+    });
+</script>
+
+{% endblock %}

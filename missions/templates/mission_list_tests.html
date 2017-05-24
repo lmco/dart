@@ -1,0 +1,192 @@
+{% extends 'base.html' %}
+
+{% comment %}
+# Copyright 2017 Lockheed Martin Corporation
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#     http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+#
+{% endcomment %}
+
+{% load bootstrap3 %}
+{% load dart_bootstrap_formatting_helpers %}
+{% load quickparts %}
+
+{% block title %}Mission Test Cases{% endblock %}
+
+{% block additional_head_content %}
+
+
+{% endblock %}
+
+{% block extra_nav_bar_content_right %}
+<li class="">
+        <button
+                id="statsModalButton"
+                type="button"
+                data-toggle="modal"
+                data-target="#statsModal"
+                class="btn btn-default navbar-btn">
+            Mission Stats
+        </button> &nbsp;
+    <script>
+            /* Load stats modal content */
+            $("#statsModalButton").on("click", function() {
+                $("#statsModalBody").load("{% url 'mission-stats' mission=this_mission.id %}", function(response, status, xhr) {
+                    if ( status == "error" ) {
+                        $("#statsModalBody").html("<p>Error getting stats: " + xhr.status + " " + xhr.statusText + "</p>");
+                    }
+                });
+            });
+        </script>
+</li>
+{% endblock %}
+
+{% block main_heading %}
+<h1 class="page-header">Mission Test Cases for {{this_mission.mission_name}}
+    <div style="float:right">
+        <a href="{% url 'mission-test-new' mission=this_mission.id %}" class="btn btn-primary">
+            {% bootstrap_icon "plus" %} Add New
+        </a>
+    </div>
+</h1>
+{% endblock %}
+
+{% block content%}
+
+<!-- Stats Modal -->
+<div class="modal fade" id="statsModal" tabindex="-1" role="dialog" aria-labelledby="statsModalTitle">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header" style="background-color: rgb(136, 17, 17); color: #ccc;">
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+        <h4 class="modal-title" id="statsModalTitle">Mission Stats</h4>
+          <small>Note: Hidden TCs are <strong>EXCLUDED</strong> from all metrics</small>
+      </div>
+      <div id="statsModalBody" class="modal-body">
+          {% preloader "center" %}
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+      </div>
+    </div>
+  </div>
+</div>
+<!-- End Stats Modal -->
+
+<div class="clearfix">&nbsp;</div>
+<table class="table table-hover table-bordered table-responsive">
+    <thead>
+    <tr>
+        <th style="width: 70px;"> </th>
+        <th style="width: 30px;">#</th>
+        <th>Test Objective</th>
+        <th>POC</th>
+        <th>Supporting Data</th>
+        <th>Test Result</th>
+        <th>Status</th>
+        <th style="width: 50px;"></th>
+    </tr>
+</thead>
+<tbody class="sortable">
+    {% for t in tests %}
+        <tr class='{{ t.test_case_status | testCaseStatusToBootstrapClass:t.test_case_include_flag }}' id="{{t.id}}">
+            <td>
+                <span class="glyphicon glyphicon-sort sort-handle" title="Drag to sort"> </span>
+				<a href="{% url 'mission-test-edit' pk=t.id mission=this_mission.id %}"
+                        {% if t.test_case_status == 'IN_WORK' %}
+                            class="inWorkConfirmation"
+                        {% endif %}
+                title="Edit" >
+                    {% bootstrap_icon "edit" %}
+                </a>
+                <a href="{% url 'mission-test-view' pk=t.id mission=this_mission.id %}" title="Read Only">
+                   {% bootstrap_icon "eye-open" %}
+                </a>
+			</td>
+            <td class="testNumber">{{ t.id }}</td>
+            <td title="(Enclave) Objective">
+                {% if not t.test_case_include_flag %}
+                    <del>
+                {% endif %}
+                    {% if t.enclave %}({{ t.enclave }}) {% endif %}{{ t.test_objective }}
+                {% if not t.test_case_include_flag %}
+                    </del>
+                {% endif %}
+                <div class="pull-right">
+                    {% if t.has_findings %}
+                    <a class="label label-danger" href="{%url 'mission-test-view' pk=t.id mission=this_mission.id %}#id_findings">Finding</a>
+                    {% endif %}
+                </div>
+            </td>
+            <td>
+                {{ t.point_of_contact }}
+            </td>
+            <td>
+                {% manage_data_button this_mission.id t.id t.count_of_supporting_data %}
+            </td>
+            <td>{{ t.get_execution_status_display }}</td>
+            <td>{{ t.get_test_case_status_display }}</td>
+            <td>{% if t.test_case_include_flag %}
+                    <span class="glyphicon glyphicon-book" title="Visible on report"></span>
+                {% else %}
+                    <span class="glyphicon glyphicon-book hidden-on-report" style="color:lightgray;" title="Hidden on report"></span>
+                {% endif %}
+                    <a class="duplicate-test-case" title="Duplicate" href="#">{% bootstrap_icon "asterisk" %}</a>
+            </td>
+        </tr>
+    {% endfor %}
+</tbody>
+</table>
+<p class="small">* Drag & drop to reorder test cases</p>
+
+<script type="text/javascript">
+
+/* Make rows sortable */
+    $('.sortable').sortable( {
+        handle: '.sort-handle',
+        update: function(event, ui) {
+            var payload = {};
+            payload.server_timestamp = "{{ server_timestamp }}"
+            payload.order = []
+            $('.sortable > tr').each(function() {
+                payload.order.push(this.id);
+            });
+            $.post("{% url 'mission-tests-reorder' mission=this_mission.id %}",
+                JSON.stringify(payload),
+                function (data) { }
+            );
+        }
+    });
+
+/* Duplicate test cases */
+    $('.duplicate-test-case').on('click', function(event) {
+        row_obj = $(event.target).closest("tr");
+        test_id = $(row_obj).attr("id");
+        test_number = $(row_obj).children(".testNumber").text();
+        var confirm_duplicate = confirm("Create a duplicate of test #" + test_number + " and open it for editing?");
+
+        if (confirm_duplicate) {
+            $.get( test_id + "/clone/", function( data, status ) {
+                console.log(data);
+                console.log(status);
+                window.location.assign(data);
+            })
+            .fail(function(data) {
+                alert("Error: " + data.responseText);
+            });
+        }
+
+    });
+</script>
+
+{% endblock %}

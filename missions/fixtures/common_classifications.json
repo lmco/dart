@@ -1,0 +1,94 @@
+[
+  {
+    "fields": {
+      "verbose_legend": "FOR OFFICIAL USE ONLY",
+      "background_color": 2,
+      "short_legend": "FOUO",
+      "text_color": 1,
+      "report_label_color_selection": "T"
+    },
+    "model": "missions.classificationlegend",
+    "pk": 2
+  },
+  {
+    "fields": {
+      "verbose_legend": "UNCLASSIFIED",
+      "background_color": 3,
+      "short_legend": "U",
+      "text_color": 2,
+      "report_label_color_selection": "B"
+    },
+    "model": "missions.classificationlegend",
+    "pk": 3
+  },
+  {
+    "fields": {
+      "verbose_legend": "UNCLASSIFIED // FOR OFFICIAL USE ONLY",
+      "background_color": 3,
+      "short_legend": "U//FOUO",
+      "text_color": 2,
+      "report_label_color_selection": "B"
+    },
+    "model": "missions.classificationlegend",
+    "pk": 4
+  },
+  {
+    "fields": {
+      "verbose_legend": "PROPRIETARY INFORMATION",
+      "background_color": 2,
+      "short_legend": "PI",
+      "text_color": 1,
+      "report_label_color_selection": "T"
+    },
+    "model": "missions.classificationlegend",
+    "pk": 5
+  },
+  {
+    "fields": {
+      "display_text": "Green",
+      "hex_color_code": "006600"
+    },
+    "model": "missions.color",
+    "pk": 3
+  },
+  {
+    "fields": {
+      "display_text": "Blue",
+      "hex_color_code": "002f6c"
+    },
+    "model": "missions.color",
+    "pk": 4
+  },
+  {
+    "fields": {
+      "display_text": "Red",
+      "hex_color_code": "cc0000"
+    },
+    "model": "missions.color",
+    "pk": 5
+  },
+  {
+    "fields": {
+      "display_text": "Orange",
+      "hex_color_code": "faba43"
+    },
+    "model": "missions.color",
+    "pk": 6
+  },
+  {
+    "fields": {
+      "display_text": "Yellow",
+      "hex_color_code": "ffff00"
+    },
+    "model": "missions.color",
+    "pk": 7
+  },
+  {
+    "fields": {
+      "display_text": "Purple",
+      "hex_color_code": "990099"
+    },
+    "model": "missions.color",
+    "pk": 8
+  }
+]

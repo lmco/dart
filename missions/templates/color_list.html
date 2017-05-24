@@ -1,0 +1,137 @@
+{% extends 'base.html' %}
+
+{% comment %}
+# Copyright 2017 Lockheed Martin Corporation
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#     http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+#
+{% endcomment %}
+
+{% load bootstrap3 %}
+{% block title %}Color Options Update{% endblock %}
+
+{% block extra_nav_bar_content_right %}
+<li class="">
+        <a href="{% url 'update-settings' %}">System Settings</a>
+</li>
+{% endblock %}
+
+{% block main_heading %}
+<h1 class="page-header">Color Options Update<div style="float:right"><button class="btn btn-primary" onclick="addNewColorRow()">{% bootstrap_icon "plus" %} Add New</button></div></h1>
+{% endblock %}
+{% block content %}
+
+<div class="clearfix">&nbsp;</div>
+<table class="table table-hover table-bordered table-striped table-responsive" id="color-options-list">
+    <tr>
+        <th>Display Text</th>
+        <th>6-Character Hex Code (RGB)</th>
+        <th>Actions</th>
+    </tr>
+
+    {% for color in object_list %}
+        <tr id="row-id-{{color.id}}" data-url="{% url 'update-color' pk=color.id %}">
+            <td>
+                <span class="cell-content">{{ color.display_text }}</span>
+                <input type="text" class="hide form-control" data-key="display_text" value="{{ color.display_text }}" />
+            </td>
+            <td>
+                <span class="cell-content">{{ color.hex_color_code }}</span>
+                <input type="text" class="hide form-control" data-key="hex_color_code" value="{{ color.hex_color_code }}" />
+            </td>
+            <td>
+                <span id="edit-color-{{color.id}}" onclick="beginColorUpdate('{{color.id}}', '{% url 'update-color' pk=color.id %}')">{% bootstrap_icon "pencil" %}</span>&nbsp;
+                <span onclick="deleteColor('{% url 'update-color' pk=color.id %}')">{% bootstrap_icon "trash" %}</span><br />
+            </td>
+        </tr>
+    {% endfor %}
+</table>
+
+<script type="text/javascript">
+    function deleteColor(url) {
+        $.ajax({
+                url: url,
+                method: "DELETE",
+                success: function(data, textStatus, jqXHR) {
+                    if (!data.success) {
+                        alert(data.message);
+                    }
+                    window.location.reload();
+                }
+             }
+        );
+    }
+
+    function beginColorUpdate(id, url) {
+        var jqObj = $('#row-id-' + id)
+        jqObj.find(".form-control, .cell-content").toggleClass("hide");
+    }
+
+    function updateColor($row) {
+        var url = $row.data("url");
+
+        var values = {};
+
+        values.display_text = $row.find("input[data-key='display_text']").first().val();
+        values.hex_color_code = $row.find("input[data-key='hex_color_code']").first().val();
+
+        $.ajax({
+            url: url,
+            method: "POST",
+            data: JSON.stringify(values),
+            success: function (data, textStatus, jqXHR) {
+                if (!data.success) {
+                    alert(data.message);
+                }
+                else {
+                    window.location.reload();
+                }
+            }
+        });
+    }
+
+    function addNewColorRow() {
+        var jqTable = $("#color-options-list");
+
+        var row = $("<tr/>")
+            .attr("id", "row-id-0")
+            .attr("data-url", "{% url 'update-color' %}");
+
+        var display_text_col = $("<td></td>");
+        var display_text_input = $("<input type='text'>")
+            .addClass("form-control")
+            .attr("data-key", "display_text");
+        display_text_col.append(display_text_input);
+
+        var hex_color_code_col = $("<td></td>");
+        var hex_color_code_input = $("<input type='text'>")
+            .addClass("form-control")
+            .attr("data-key", "hex_color_code");
+        hex_color_code_col.append(hex_color_code_input);
+
+        jqTable.append(row);
+        row.append(display_text_col);
+        row.append(hex_color_code_col);
+    }
+
+$(function() {
+    $("#color-options-list").on("keyup", ".form-control", function(event) {
+        /* On enter, update the color */
+        if (event.keyCode == 13) {
+            updateColor($(this).closest("tr"));
+        }
+    });
+});
+</script>
+
+{% endblock %}

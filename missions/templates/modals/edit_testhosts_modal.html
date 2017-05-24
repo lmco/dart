@@ -1,0 +1,191 @@
+{% comment %}
+# Copyright 2017 Lockheed Martin Corporation
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#     http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+#
+{% endcomment %}
+
+{% load bootstrap3 %}
+{% load dart_bootstrap_formatting_helpers %}
+{% load quickparts %}
+
+<!-- Hosts Modal -->
+<div class="modal fade" id="editHostsModal" tabindex="-1" role="dialog" aria-labelledby="editHostsModalTitle">
+  <div class="modal-dialog modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header" style="background-color: rgb(136, 17, 17); color: #ccc;">
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+        <h4 class="modal-title" id="editHostsModalTitle">Edit Hosts</h4>
+          <small>Note: To add/remove available hosts, edit hosts at the mission level.</small>
+      </div>
+      <div id="editHostsModalBody" class="modal-body">
+          {% preloader "center" %}
+          <div id="hostsGrid" class="row hidden">
+              <div id="hosts-source-col" class="col-md-4 center-block">
+                  <h3>Sources</h3>
+                  <div id="source-container" class="drop-container">
+                      <!-- Placeholder -->
+                  </div>
+
+              </div>
+              <div id="hosts-available-col" class="col-md-4 center-block">
+                  <h3>Available</h3>
+                  <div id="available-container" class="drop-container">
+                      <!-- Placeholder -->
+                  </div>
+              </div>
+              <div id="hosts-targets-col" class="col-md-4 center-block">
+                  <h3>Targets</h3>
+                  <div id="target-container" class="drop-container">
+                      <!-- Placeholder -->
+                  </div>
+              </div>
+          </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script type="text/javascript">
+
+function getHostData(jqTargets, jqSources, jqAvailable) {
+
+    $.get("{% url 'test-hosts' mission_id=mission_id test_id=test_id %}",
+        function(data, status, xhr) {
+
+            data = data.data;
+            var host_id_set = {};
+
+            for (i = 0; i < data.length; i++) {
+                if (data[i]["role"] === "target") {
+                    if (typeof jqTargets !== "undefined") {
+                        jqTargets.append("<div data-host_id=" + data[i]['id'] + ">" + data[i]['display'] + "</div>");
+                    }
+                }
+                else if (data[i]["role"] === "source") {
+                    if (typeof jqSources !== "undefined") {
+                        jqSources.append("<div data-host_id=" + data[i]['id'] + ">" + data[i]['display'] + "</div>");
+                    }
+                }
+
+                if (typeof jqAvailable !== "undefined") {
+                    display_text = data[i]['display']
+                    if (data[i]["is_no_hit"] === true) {
+                         display_text += " (no hit)";
+                    }
+                    if (!host_id_set[data[i]['id']]) {
+                        jqAvailable.append("<div data-host_id=" + data[i]['id'] + ">" + display_text + "</div>");
+                        host_id_set[data[i]['id']] = true;
+                    }
+
+                }
+
+            }
+        }
+    );
+}
+
+function clearContainers(containers) {
+    for (i = 0; i < containers.length; i++) {
+        containers[i].empty();
+    }
+}
+
+function addTestHost(host_id, role) {
+    if (role !== "available") {
+        $.post("{% url 'test-hosts' mission_id=mission_id test_id=test_id %}",
+            JSON.stringify({"host_id": host_id, "role": role}),
+            function(data, status, xhr) {
+                console.log(data);
+                clearContainers([jq_targets, jq_sources, jq_available]);
+                getHostData(jq_targets, jq_sources, jq_available);
+            }
+        );
+    }
+}
+
+function removeTestHost(host_id, role) {
+    if (role !== "available") {
+        $.ajax({
+            url: "{% url 'test-hosts' mission_id=mission_id test_id=test_id %}",
+            type: "DELETE",
+            data: JSON.stringify({"host_id": host_id, "role": role}),
+            success: function(data, status, xhr) {
+                console.log(data);
+            }
+        });
+    }
+}
+
+$('#editHostsModal').on('show.bs.modal', function (event) {
+    console.log("loading editHostsModal");
+
+    jq_targets = $("#target-container");
+    jq_sources = $("#source-container");
+    jq_available = $("#available-container");
+
+    clearContainers([jq_targets, jq_sources, jq_available]);
+
+    getHostData(jq_targets, jq_sources, jq_available);
+
+    $(function() {
+       $('.drop-container > div').draggable({
+            appendTo: "body",
+       });
+       $('.drop-container').droppable({
+            drop: function(event, ui) {
+                $(ui.draggable).remove();
+                if (event.target.id === "source-container") {
+                    addTestHost(ui.draggable.context.dataset.host_id, "source");
+                } else if (event.target.id === "target-container") {
+                    addTestHost(ui.draggable.context.dataset.host_id, "target");
+                }
+
+            },
+            activate: function(event, ui) {
+                console.log(event.currentTarget.id);
+                if (event.currentTarget.id === "source-container") {
+                    removeTestHost(ui.draggable.context.dataset.host_id, "source");
+                } else if (event.currentTarget.id === "target-container") {
+                    removeTestHost(ui.draggable.context.dataset.host_id, "target");
+                }
+            }
+       }).sortable({
+            sort: function() {
+                $(this).removeClass('ui-state-default');
+            }
+       });
+    });
+
+    $('.preloader').addClass('hidden');
+    $('#hostsGrid').removeClass('hidden');
+});
+
+$('#editHostsModal').on('hide.bs.modal', function (event) {
+
+    var jq_targets = $('#targetHostsList');
+    var jq_sources = $('#sourceHostsList');
+
+    clearContainers([jq_targets, jq_sources]);
+
+    getHostData(jq_targets, jq_sources);
+
+
+});
+
+</script>
+
+<!-- End Hosts Modal -->
