@@ -1,4 +1,4 @@
-# LM DART: Documentation and Reporting Tool
+# DART: A Documentation and Reporting Tool
 
 DART is a test documentation tool created by the Lockheed Martin Red Team to
 document and report on penetration tests in isolated network environments. 
@@ -22,6 +22,20 @@ DART is intended to be executed in isolated, uncontested environments such as an
 isolan, private test network, or on a standalone machine. It is _not_ 
 intended for deployment on untrusted networks.
 
+## Output Examples
+
+### Multiple mission support
+
+![Multiple mission support](examples/mission-list.png?raw=true "Multiple mission support")
+
+### Test case & artifact tracking
+
+![Test case & artifact tracking](examples/tests-list.png?raw=true "Test case & artifact tracking")
+
+### Generates a Microsoft Word report 
+
+![Generates a Microsoft Word report](examples/output-testcase-with-finding.png?raw=true "Generates a Microsoft Word report")
+
 ## Getting Started
 
 ### Supported Configurations 
@@ -29,7 +43,7 @@ intended for deployment on untrusted networks.
 DART is tested to work in the following configurations:
 
 - Windows 7 system install
-- (coming soon) Docker
+- Docker (Experimental, read the warning in the Dockerfile)
 
 Other configurations will likely be successful, however we do not 
 currently test DART's operation in these configurations.
