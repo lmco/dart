@@ -1,7 +1,7 @@
 # DART: A Documentation and Reporting Tool
 
 DART is a test documentation tool created by the Lockheed Martin Red Team to
-document and report on penetration tests in isolated network environments. 
+document and report on penetration tests, especially in isolated network environments. 
 
 The goals of this tool are:
 
