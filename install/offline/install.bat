@@ -19,8 +19,8 @@ goto EndOfLicense
 SET iserr=0
 SET SCRIPTDIR=%~dp0
 SET DARTROOTDIR=%~dp0..\..\
-SET DOWNLOADSDIR="%SCRIPTDIR%downloads\ "
-SET REQUIREMENTSFILE="%~dp0..\..\requirements.txt "
+SET DOWNLOADSDIR=%SCRIPTDIR%downloads\
+SET REQUIREMENTSFILE=%~dp0..\..\requirements.txt 
 
 REM DART Offline Installation
 REM Copyright 2017 Lockheed Martin Corporation
