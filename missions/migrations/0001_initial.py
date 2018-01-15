@@ -83,7 +83,6 @@ class Migration(migrations.Migration):
                 ('customer_notes_include_flag', models.BooleanField(default=True, verbose_name=b'Mission Option: Include customer notes section in report?')),
                 ('testdetail_sort_order', models.TextField(default=b'[]', blank=True)),
                 ('business_area', models.ForeignKey(verbose_name=b'Business Area', to='missions.BusinessArea')),
-                ('test_case_identifier', models.CharField(max_length=20, verbose_name=b'Test Case Identifier')),
             ],
         ),
         migrations.CreateModel(
@@ -134,7 +133,6 @@ class Migration(migrations.Migration):
                 ('mission', models.ForeignKey(verbose_name=b'Mission', to='missions.Mission')),
                 ('source_hosts', models.ManyToManyField(related_name='source_set', to='missions.Host')),
                 ('target_hosts', models.ManyToManyField(related_name='target_set', to='missions.Host')),
-                ('re_eval_test_case_number', models.CharField(default=b'', max_length=25, verbose_name=b'Re-evaluate test case #', blank=True)),
             ],
         ),
         migrations.AddField(
