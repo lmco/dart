@@ -482,7 +482,8 @@ class TestDetail(models.Model):
         max_length=25,
         blank=True,
         default="",
-        verbose_name="Re-evaluate test case #"
+        verbose_name="Re-Evaluate Test Case #",
+        help_text="Adds previous test case reference to description in report."
     )
 
     def count_of_supporting_data(self):
