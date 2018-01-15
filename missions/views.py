@@ -100,6 +100,7 @@ class CreateMissionView(CreateView):
     fields = [
         'mission_name',
         'mission_number',
+        'test_case_identifier',
         'business_area',
         'introduction',
         'scope',
@@ -141,6 +142,7 @@ class EditMissionView(UpdateView):
     fields = [
         'mission_name',
         'mission_number',
+        'test_case_identifier',
         'business_area',
         'introduction',
         'scope',
@@ -343,6 +345,7 @@ class CreateMissionTestView(CreateView):
         'attack_type_include_flag',
         'assumptions',
         'assumptions_include_flag',
+        're_eval_test_case_number',
         'test_description',
         'test_description_include_flag',
         'sources_include_flag',
@@ -394,6 +397,7 @@ class EditMissionTestView(UpdateView):
         'attack_type_include_flag',
         'assumptions',
         'assumptions_include_flag',
+        're_eval_test_case_number',
         'test_description',
         'test_description_include_flag',
         'sources_include_flag',
