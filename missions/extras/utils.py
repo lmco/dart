@@ -303,7 +303,7 @@ def generate_report_or_attachments(mission_id, zip_attachments=False):
 
         # Test Case Number (Table Header Row)
         cell = table.cell(1, 0)
-        get_cleared_paragraph(cell).text = 'Test #{0}{1}'.format(mission.test_case_identifier, test_case_number)
+        get_cleared_paragraph(cell).text = 'Test #{0}-{1}'.format(mission.test_case_identifier, test_case_number)
 
         row_number = 0
 
@@ -369,7 +369,7 @@ def generate_report_or_attachments(mission_id, zip_attachments=False):
         if mission.test_description_include_flag and t.test_description_include_flag:
             cell = table.cell(row_number, 1)
             if t.re_eval_test_case_number:
-                get_cleared_paragraph(cell).text = standardize_report_output_field('Reference previous test case #{0}\n\n{1}'.format(t.re_eval_test_case_number, t.test_description))
+                get_cleared_paragraph(cell).text = standardize_report_output_field('This is a reevaluation; reference previous test case #{0}\n\n{1}'.format(t.re_eval_test_case_number, t.test_description))
             else:
                 cell.text = standardize_report_output_field(t.test_description)
         else:
