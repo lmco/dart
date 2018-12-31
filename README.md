@@ -1,5 +1,10 @@
 # DART: A Documentation and Reporting Tool
 
+[![Build Status](https://img.shields.io/github/forks/lmco/dart.svg)](https://github.com/lmco/dart)
+[![Build Status](https://img.shields.io/github/stars/lmco/dart.svg)](https://github.com/lmco/dart)
+[![License](https://img.shields.io/github/license/lmco/dart.svg)](https://github.com/lmco/dart)
+[![Rawsec's CyberSecurity Inventory](https://inventory.rawsec.ml/img/badges/Rawsec-inventoried-FF5050_flat.svg)](https://inventory.rawsec.ml/tools.html#DART)
+
 DART is a test documentation tool created by the Lockheed Martin Red Team to
 document and report on penetration tests, especially in isolated network environments. 
 
