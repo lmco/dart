@@ -90,6 +90,8 @@ class DartOfflinePrepper(object):
 
         if self.BYPASS_CERTIFICATE_VALIDATION:
             pip_download_cmd += ['--trusted-host', 'pypi.python.org']
+            pip_download_cmd += ['--trusted-host', 'pypi.org']
+            pip_download_cmd += ['--trusted-host', 'files.pythonhosted.org']
 
         # Download lxml wheels for multiple architectures
         lxml_win32 = [

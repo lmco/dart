@@ -76,7 +76,7 @@
               {% endif %}
           </ul>
             {% if not user.is_authenticated %}
-          <form class="navbar-form navbar-right" role="form" method="POST" action="{% url 'django.contrib.auth.views.login' %}">
+          <form class="navbar-form navbar-right" role="form" method="POST" action="{% url 'login' %}">
             {% csrf_token %}
             <div class="form-group">
               <input id="id_username" type="text" placeholder="Username" name="username" class="form-control">
@@ -117,7 +117,7 @@
       <div class="row">
         <footer class="footer">
             <hr>
-            <p>&copy; 2017 Lockheed Martin Corporation | <a href="{% url 'about' %}">About</a>
+            <p>&copy; {% now "Y" %} Lockheed Martin Corporation | <a href="{% url 'about' %}">About</a>
             <small class="pull-right">v{{ DART_VERSION_NUMBER }}</small>
             </p>
         </footer>

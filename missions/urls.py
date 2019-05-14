@@ -15,12 +15,11 @@
 # limitations under the License.
 #
 
-from django.conf.urls import patterns, url
+from django.conf.urls import url
 import missions.views
 from django.contrib.auth.decorators import login_required
 
-urlpatterns = patterns('',
-
+urlpatterns = [
     url(r'^$',
         login_required(missions.views.ListMissionView.as_view()), name='missions-list'),
     url(r'^new/$',
@@ -64,4 +63,4 @@ urlpatterns = patterns('',
         login_required(missions.views.EditMissionTestsSupportingDataView.as_view()), name='test-data-edit'),
     url(r'^(?P<mission>\d+)/tests/(?P<test_detail>\d+)/data/(?P<pk>\d+)/delete/$',
         login_required(missions.views.DeleteMissionTestsSupportingDataView.as_view()), name='test-data-delete'),
-)
+]
