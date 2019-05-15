@@ -486,6 +486,11 @@ class TestDetail(models.Model):
         help_text="Adds previous test case reference to description in report."
     )
 
+    supporting_data_sort_order = models.TextField(
+        blank=True,
+        default="[]"
+    )
+
     def count_of_supporting_data(self):
         return len(SupportingData.objects.filter(test_detail=self.pk))
 

@@ -63,4 +63,7 @@ urlpatterns = [
         login_required(missions.views.EditMissionTestsSupportingDataView.as_view()), name='test-data-edit'),
     url(r'^(?P<mission>\d+)/tests/(?P<test_detail>\d+)/data/(?P<pk>\d+)/delete/$',
         login_required(missions.views.DeleteMissionTestsSupportingDataView.as_view()), name='test-data-delete'),
+    url(r'^(?P<mission>\d+)/tests/(?P<test_detail>\d+)/data/reorder/$',
+        login_required(missions.views.OrderMissionTestsSupportingDataView.as_view()), name='test-data-reorder'),
+
 ]

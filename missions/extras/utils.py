@@ -34,7 +34,7 @@ from docx import Document
 from docx.shared import Inches, RGBColor
 from docx.image.exceptions import UnrecognizedImageError, UnexpectedEndOfFileError, InvalidImageStreamError
 
-from missions.models import Mission, DARTDynamicSettings, TestDetail, SupportingData
+from missions.models import Mission, DARTDynamicSettings, TestDetail
 from .helpers.sorters import TestSortingHelper
 from .helpers.formatters import standardize_report_output_field
 
@@ -333,7 +333,7 @@ def generate_report_or_attachments(mission_id, zip_attachments=False):
             include_attack_type = True
 
         left_cell = table.cell(row_number, 0)
-        right_cell = table.cell(row_number, 1)
+        right_cell = get_cleared_paragraph(table.cell(row_number, 1))
 
         if include_attack_phase or include_attack_type:
             if include_attack_phase and include_attack_type:
@@ -355,7 +355,7 @@ def generate_report_or_attachments(mission_id, zip_attachments=False):
         #
         row_number += 1
         if mission.assumptions_include_flag and t.assumptions_include_flag:
-            cell = table.cell(row_number, 1)
+            cell = get_cleared_paragraph(table.cell(row_number, 1))
             cell.text = standardize_report_output_field(t.assumptions)
         else:
             logger.debug('Removing Assumptions Row')
@@ -367,9 +367,9 @@ def generate_report_or_attachments(mission_id, zip_attachments=False):
         #
         row_number += 1
         if mission.test_description_include_flag and t.test_description_include_flag:
-            cell = table.cell(row_number, 1)
+            cell = get_cleared_paragraph(table.cell(row_number, 1))
             if t.re_eval_test_case_number:
-                get_cleared_paragraph(cell).text = standardize_report_output_field('This is a reevaluation; reference previous test case #{0}\n\n{1}'.format(t.re_eval_test_case_number, t.test_description))
+                cell.text = standardize_report_output_field('This is a reevaluation; reference previous test case #{0}\n\n{1}'.format(t.re_eval_test_case_number, t.test_description))
             else:
                 cell.text = standardize_report_output_field(t.test_description)
         else:
@@ -382,7 +382,7 @@ def generate_report_or_attachments(mission_id, zip_attachments=False):
         #
         row_number += 1
         if mission.findings_include_flag and t.findings_include_flag:
-            cell = table.cell(row_number, 1)
+            cell = get_cleared_paragraph(table.cell(row_number, 1))
             cell.text = standardize_report_output_field(t.findings)
         else:
             logger.debug('Removing Findings Row')
@@ -394,7 +394,7 @@ def generate_report_or_attachments(mission_id, zip_attachments=False):
         #
         row_number += 1
         if mission.mitigation_include_flag and t.mitigation_include_flag:
-            cell = table.cell(row_number, 1)
+            cell = get_cleared_paragraph(table.cell(row_number, 1))
             cell.text = standardize_report_output_field(t.mitigation)
         else:
             logger.debug('Removing Mitigations Row')
@@ -406,7 +406,7 @@ def generate_report_or_attachments(mission_id, zip_attachments=False):
         #
         row_number += 1
         if mission.tools_used_include_flag and t.tools_used_include_flag:
-            cell = table.cell(row_number, 1)
+            cell = get_cleared_paragraph(table.cell(row_number, 1))
             cell.text = standardize_report_output_field(t.tools_used)
         else:
             logger.debug('Removing Tools Row')
@@ -419,7 +419,6 @@ def generate_report_or_attachments(mission_id, zip_attachments=False):
         row_number += 1
         if mission.command_syntax_include_flag and t.command_syntax_include_flag:
             cell = get_cleared_paragraph(table.cell(row_number, 1))
-            cell.style = 'Normal-LeftAlign'
             cell.text = standardize_report_output_field(t.command_syntax)
         else:
             logger.debug('Removing Commands/Syntax Row')
@@ -431,7 +430,7 @@ def generate_report_or_attachments(mission_id, zip_attachments=False):
         #
         row_number += 1
         if mission.targets_include_flag and t.targets_include_flag:
-            cell = table.cell(row_number, 1)
+            cell = get_cleared_paragraph(table.cell(row_number, 1))
             cell.text = '\n'.join([str(x) for x in t.target_hosts.all()])
         else:
             logger.debug('Removing Targets Row')
@@ -443,7 +442,7 @@ def generate_report_or_attachments(mission_id, zip_attachments=False):
         #
         row_number += 1
         if mission.sources_include_flag and t.sources_include_flag:
-            cell = table.cell(row_number, 1)
+            cell = get_cleared_paragraph(table.cell(row_number, 1))
             cell.text = '\n'.join([str(x) for x in t.source_hosts.all()])
 
         else:
@@ -456,7 +455,7 @@ def generate_report_or_attachments(mission_id, zip_attachments=False):
         #
         row_number += 1
         if mission.attack_time_date_include_flag and t.attack_time_date_include_flag:
-            cell = table.cell(row_number, 1)
+            cell = get_cleared_paragraph(table.cell(row_number, 1))
             cell.text = localtime(t.attack_time_date).strftime('%b %d, %Y @ %I:%M %p')
         else:
             logger.debug('Removing Date/Time Row')
@@ -468,7 +467,7 @@ def generate_report_or_attachments(mission_id, zip_attachments=False):
         #
         row_number += 1
         if mission.attack_side_effects_include_flag and t.attack_side_effects_include_flag:
-            cell = table.cell(row_number, 1)
+            cell = get_cleared_paragraph(table.cell(row_number, 1))
             cell.text = standardize_report_output_field(t.attack_side_effects)
         else:
             logger.debug('Removing Side Effects Row')
@@ -480,7 +479,7 @@ def generate_report_or_attachments(mission_id, zip_attachments=False):
         #
         row_number += 1
         if mission.test_result_observation_include_flag and t.test_result_observation_include_flag:
-            cell = table.cell(row_number, 1)
+            cell = get_cleared_paragraph(table.cell(row_number, 1))
             cell.text = standardize_report_output_field(t.test_result_observation)
         else:
             logger.debug('Removing Details Row')
@@ -494,7 +493,7 @@ def generate_report_or_attachments(mission_id, zip_attachments=False):
         supporting_data_cell = None
         supporting_data_row = None
         if mission.supporting_data_include_flag:
-            supporting_data_cell = table.cell(row_number, 1)
+            supporting_data_cell = get_cleared_paragraph(table.cell(row_number, 1))
             supporting_data_row = table.rows[row_number]
         else:
             logger.debug('Removing Supporting Data Row')
@@ -515,8 +514,9 @@ def generate_report_or_attachments(mission_id, zip_attachments=False):
         supporting_data_cell_items = []
 
         if mission.supporting_data_include_flag:
-            my_data = SupportingData.objects.filter(test_detail_id=t.id
-                                                    ).filter(include_flag=True)
+            my_data = TestSortingHelper.get_ordered_supporting_data(
+                test_detail_id=t.id,
+                reportable_supporting_data_only=True)
 
             if len(my_data) > 0:
 
@@ -594,7 +594,7 @@ def generate_report_or_attachments(mission_id, zip_attachments=False):
                         len(supporting_data_cell_items),
                         t.id)
                     )
-                    get_cleared_paragraph(supporting_data_cell).text = '\n'.join(supporting_data_cell_items)
+                    supporting_data_cell.text = '\n'.join(supporting_data_cell_items)
 
         if len(supporting_data_cell_items) == 0:
             logger.debug('There are no supporting_data_cell_items; removing the supporting data row.')

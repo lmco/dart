@@ -16,7 +16,7 @@
 import logging
 import json
 
-from missions.models import Mission, TestDetail
+from missions.models import Mission, TestDetail, SupportingData
 
 logger = logging.getLogger(__name__)
 
@@ -78,21 +78,90 @@ class TestSortingHelper(object):
 
         return deconflicted_sort_order
 
+    @staticmethod
+    def deconflict_and_update_supporting_data_sort_order(testdetail_id, testdata=None):
+        """Ensures the supporting_data_sort_order of a test is accurate. Returns ordered array of supporting_data ids"""
+
+        logger.debug('Performing Supporting Data deconflict and update (testdetail {testdetail})'
+                     .format(testdetail=testdetail_id))
+
+        testdetail_model = TestDetail.objects.get(pk=testdetail_id)
+        sort_order = json.loads(testdetail_model.supporting_data_sort_order)
+        deconflicted_sort_order = []
+        sort_order_dirty = False
+
+        # Preserve existing sort order and build the testdetail_sort_order field
+        if testdata and not sort_order:
+            logger.debug('Supporting data for test found but no existing order (testdetail {testdetail}); ' +
+                         'Building default sort order'.format(testdetail=testdetail_id))
+            sort_order = [data.id for data in testdata]
+
+        # Perform a reconcile to catch edge cases where testdata have been added or deleted
+        logger.debug('Supporting Data Deconflict is reconciling sort order with the database (testdetail {testdetail})'
+                     .format(testdetail=testdetail_id))
+        data_ids_from_db = [data.id for data in testdata]
+        for x in sort_order:
+            if x in data_ids_from_db:
+                deconflicted_sort_order.append(x)
+            else:
+                logger.info('Sort order is dirty (Supporting data has been deleted from DB) '
+                            '(testdetail {testdetail}, sd {sd})'.format(testdetail=testdetail_id, sd=x))
+                sort_order_dirty = True  # Id in mission's sort order, but not database (it's been deleted)
+
+        for x in data_ids_from_db:
+            if x not in deconflicted_sort_order:
+                deconflicted_sort_order.append(x)
+                logger.info('Sort order is dirty (Supporting data has been added to DB) '
+                            '(testdetail {testdetail}, sd {sd})'.format(testdetail=testdetail_id, sd=x))
+                sort_order_dirty = True  # Id in the database, but not in the testdetail sort order (it's been added)
+
+        # Save the reconciled sort order
+        if sort_order_dirty:
+            testdetail_model.supporting_data_sort_order = json.dumps(deconflicted_sort_order)
+            testdetail_model.save(update_fields=['supporting_data_sort_order'])
+            logger.info('Reconciliation Performed (TestDetail %s): '
+                        'TestDetail Supporting Data Sort Order: %s; '
+                        'Suppporting Data from Database: %s; '
+                        'Result of Deconflict: %s' % (testdetail_id, sort_order, data_ids_from_db, deconflicted_sort_order))
+
+        return deconflicted_sort_order
+
     @classmethod
     def get_ordered_testdetails(cls, mission_id, reportable_tests_only=False):
 
         try:
             tests = TestDetail.objects.filter(mission=mission_id)
-            if reportable_tests_only:
-                tests = tests.filter(test_case_include_flag=True)
         except TestDetail.DoesNotExist:
             tests = ()
 
         sort_order = cls.deconflict_and_update(mission_id, tests)
 
         # Order
+        excluded_tests = []
+        if reportable_tests_only:
+            excluded_tests = tests.filter(test_case_include_flag=False).values_list('id', flat=True)
+
         test_dict = dict([(test.id, test) for test in tests])
-        ordered_tests = [test_dict[test_id] for test_id in sort_order]
+        ordered_tests = [test_dict[test_id] for test_id in sort_order if test_id not in excluded_tests]
 
         return ordered_tests
 
+    @classmethod
+    def get_ordered_supporting_data(cls, test_detail_id, reportable_supporting_data_only=False):
+
+        try:
+            testdata = SupportingData.objects.filter(test_detail=test_detail_id)
+        except TestDetail.DoesNotExist:
+            testdata = ()
+
+        sort_order = cls.deconflict_and_update_supporting_data_sort_order(test_detail_id, testdata)
+
+        # Order
+        excluded_data = []
+        if reportable_supporting_data_only:
+            excluded_data = testdata.filter(include_flag=False).values_list('id', flat=True)
+
+        testdata_dict = dict([(data.id, data) for data in testdata])
+        ordered_testdata = [testdata_dict[testdata_id] for testdata_id in sort_order if testdata_id not in excluded_data]
+
+        return ordered_testdata

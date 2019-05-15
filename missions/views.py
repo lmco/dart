@@ -446,12 +446,7 @@ class ListMissionTestsSupportingDataView(ListView):
     template_name = 'test_supporting_data_list.html'
 
     def get_queryset(self):
-        try:
-            testdata = SupportingData.objects.filter(test_detail=self.kwargs['test_detail'])
-        except TestDetail.DoesNotExist:
-            testdata = ()
-
-        return testdata
+        return TestSortingHelper.get_ordered_supporting_data(self.kwargs['test_detail'])
 
     def get_context_data(self, **kwargs):
         context = super(ListMissionTestsSupportingDataView, self).get_context_data(**kwargs)
@@ -523,6 +518,39 @@ class DeleteMissionTestsSupportingDataView(DeleteView):
 
     def get_success_url(self):
         return reverse('test-data-list', kwargs={'mission': self.kwargs['mission'], 'test_detail': self.kwargs['test_detail']})
+
+
+class OrderMissionTestsSupportingDataView(View):
+    def post(self, request, *args, **kwargs):
+        """ Accepts a posted JSON string to specify new test case sort order """
+        mission_id = self.kwargs['mission']
+        test_detail_id = self.kwargs['test_detail']
+        new_order = []
+
+        # Ensure the received value is just ints
+        try:
+            data = json.loads(request.body)
+            for i in data['order']:
+                new_order.append(int(i))
+        except ValueError:
+            logger.exception('POST: OrderMissionTestsSupportingDataView received non-ints')
+            raise
+
+        # Update testdetail record with the new order
+        testdetail = TestDetail.objects.get(pk=test_detail_id)
+        current_order = json.loads(testdetail.supporting_data_sort_order)
+
+        # Check to see if new supporting data has been have been created since the page was rendered to this user
+        # if so, just append the missing data to the tail end so they don't disappear
+        if len(new_order) < len(current_order):
+            for i in current_order:
+                if i not in new_order:
+                    new_order.append(i)
+
+        testdetail.supporting_data_sort_order = json.dumps(new_order)
+        testdetail.save(update_fields=['supporting_data_sort_order'])
+        rs = ReturnStatus(message="Supporting Data Order Updated")
+        return HttpResponse(rs.to_json())
 
 
 class DownloadSupportingDataView(View):

@@ -25,7 +25,7 @@
 import os
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
-DART_VERSION_NUMBER = '2.0.0'
+DART_VERSION_NUMBER = '2.1.0'
 
 # SECURITY WARNING
 # We are not randomizing this key for you.

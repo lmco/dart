@@ -34,16 +34,19 @@
 
 <div class="clearfix">&nbsp;</div>
 <table class="table table-hover table-bordered table-striped table-responsive">
+    <thead>
     <tr>
-        <th style="width: 50px;"> </th>
+        <th style="width: 70px;"> </th>
         <th>Caption</th>
         <th>Filename</th>
         <th>Download</th>
     </tr>
-
+    </thead>
+    <tbody class="sortable">
     {% for s in show_data %}
-        <tr class='{{ "NEW" | testCaseStatusToBootstrapClass:s.include_flag }}'>
+        <tr class='{{ "NEW" | testCaseStatusToBootstrapClass:s.include_flag }}' id="{{s.id}}">
             <td>
+                <span class="glyphicon glyphicon-sort sort-handle" title="Drag to sort"> </span>
                 <a href="{% url 'test-data-edit' pk=s.id mission=this_mission.id test_detail=this_test.id %}">{% bootstrap_icon "edit" %}</a>
                 {% if s.include_flag %}
                     <span class="glyphicon glyphicon-book" title="Visible on report"></span>
@@ -64,6 +67,27 @@
             <td><a href="{% url 'data-view' supportingdata=s.id %}">{% bootstrap_icon "download" %} Download</a></td>
         </tr>
     {% endfor %}
+    </tbody>
 </table>
+<p class="small">* Drag & drop to reorder supporting data</p>
     {% bootstrap_pagination show_data size="medium" %}
+
+<script type="text/javascript">
+
+/* Make rows sortable */
+    $('.sortable').sortable( {
+        handle: '.sort-handle',
+        update: function(event, ui) {
+            var payload = {};
+            payload.order = []
+            $('.sortable > tr').each(function() {
+                payload.order.push(this.id);
+            });
+            $.post("{% url 'test-data-reorder' mission=this_mission.id test_detail=this_test.id %}",
+                JSON.stringify(payload),
+                function (data) { }
+            );
+        }
+    });
+</script>
 {% endblock %}
