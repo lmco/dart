@@ -48,6 +48,11 @@
     <!-- Adding jQueryUI for some interactions -->
     <script src="{% static 'base/js/jquery-ui.min.js' %}" type="text/javascript"></script>
 
+    <!-- jQuery AYS: track unsaved changes and alert on close without save
+    Source: https://github.com/codedance/jquery.AreYouSure -->
+    <script src="{% static 'base/js/jquery.are-you-sure.js' %}" type="text/javascript"></script>
+    <!-- jQuery AYS shim to work with iOS browsers -->
+    <script src="{% static 'base/js/jquery.are-you-sure-shim.js' %}" type="text/javascript"></script>
   {% block additional_head_content %}{% endblock %}
   </head>
 
@@ -161,6 +166,9 @@
         var shiftWindow = function() {scrollBy(0, -85) };
         if (location.hash) shiftWindow();
         window.addEventListener("hashchange", shiftWindow);
+
+        //Add change tracking for all input fields within forms
+        $('form').areYouSure();
     });
 
     function updateAttackTime() {
