@@ -303,7 +303,10 @@ def generate_report_or_attachments(mission_id, zip_attachments=False):
 
         # Test Case Number (Table Header Row)
         cell = table.cell(1, 0)
-        get_cleared_paragraph(cell).text = 'Test #{0}-{1}'.format(mission.test_case_identifier, test_case_number)
+        if mission.test_case_identifier:
+            get_cleared_paragraph(cell).text = 'Test #{0}-{1}'.format(mission.test_case_identifier, test_case_number)
+        else:
+            get_cleared_paragraph(cell).text = 'Test #{0}'.format(test_case_number)
 
         row_number = 0
 
