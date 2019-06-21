@@ -13,24 +13,25 @@
 # limitations under the License.
 #
 
-from django.conf.urls import patterns, include, url
+from django.conf.urls import include, url
 from django.contrib import admin
 from django.views.generic import RedirectView
 from django.contrib.staticfiles.urls import staticfiles_urlpatterns
 import missions.views
 from django.contrib.auth.decorators import login_required
+from django.contrib.auth.views import logout, login
+from django.views.static import serve
 from django.conf import settings
 
-urlpatterns = patterns('',
-
+urlpatterns = [
     url(r'^missions/', include('missions.urls')),
 
     url(r'^$', RedirectView.as_view(url='/missions/', permanent=False)),
 
     url(r'^admin/', include(admin.site.urls)),
 
-    url(r'^accounts/logout/$', 'django.contrib.auth.views.logout', name='logout'),
-    url(r'^accounts/login/$', 'django.contrib.auth.views.login', {'template_name': 'login.html'}, name='login'),
+    url(r'^accounts/logout/$', logout, name='logout'),
+    url(r'^accounts/login/$', login, {'template_name': 'login.html'}, name='login'),
     url(r'^accounts/$', RedirectView.as_view(url='/', permanent=False)),
     url(r'^accounts/profile/$', RedirectView.as_view(url='/', permanent=False)),
 
@@ -63,7 +64,7 @@ urlpatterns = patterns('',
     url(r'^data/(?P<supportingdata>\d+)/$',
         login_required(missions.views.DownloadSupportingDataView.as_view()), name='data-view'),
     url(r'^data/(?P<path>.*)$',
-        'django.views.static.serve',{'document_root': settings.MEDIA_ROOT, 'show_indexes': False}),
-)
+        serve,{'document_root': settings.MEDIA_ROOT, 'show_indexes': False}),
+]
 
 urlpatterns += staticfiles_urlpatterns()

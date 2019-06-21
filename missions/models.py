@@ -85,6 +85,13 @@ class Mission(models.Model):
         verbose_name="Mission Number",
     )
 
+    test_case_identifier = models.CharField(
+        max_length=20,
+        blank=True,
+        default="",
+        verbose_name="Test Case Identifier",
+    )
+
     business_area = models.ForeignKey(
         'BusinessArea',
         verbose_name="Business Area",
@@ -469,6 +476,19 @@ class TestDetail(models.Model):
         default="",
         verbose_name="POC",
         help_text="Individual working or most familiar with this test case."
+    )
+
+    re_eval_test_case_number = models.CharField(
+        max_length=25,
+        blank=True,
+        default="",
+        verbose_name="Re-Evaluate Test Case #",
+        help_text="Adds previous test case reference to description in report."
+    )
+
+    supporting_data_sort_order = models.TextField(
+        blank=True,
+        default="[]"
     )
 
     def count_of_supporting_data(self):

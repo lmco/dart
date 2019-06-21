@@ -25,20 +25,11 @@
 import os
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
-DART_VERSION_NUMBER = '2.0.0'
+DART_VERSION_NUMBER = '2.1.0'
 
 # SECURITY WARNING
 # We are not randomizing this key for you.
 SECRET_KEY = '5s9G+t##Trga48t594g1g8sret*(#*/rg-dfgs43wt)((dh/*d'
-
-# SECURITY WARNING
-# We run in debug mode so that static files are automatically served
-# out by the built-in django webserver for ease of setup. Since you're already running
-# this on a trusted network (remember the security warning at the top of this file) you
-# are probably okay doing the same.
-DEBUG = True
-
-TEMPLATE_DEBUG = True
 
 ALLOWED_HOSTS = []
 
@@ -68,16 +59,34 @@ MIDDLEWARE_CLASSES = (
     #'missions.middleware.RequiredInterstitial', # Uncomment and see related setting below if you require an interstitial
 )
 
-TEMPLATE_CONTEXT_PROCESSORS = (
-    "django.contrib.auth.context_processors.auth",
-    "django.core.context_processors.debug",
-    "django.core.context_processors.i18n",
-    "django.core.context_processors.media",
-    "django.core.context_processors.static",
-    "django.core.context_processors.tz",
-    "django.contrib.messages.context_processors.messages",
-    "missions.contextprocessors.context_processors.version_number",
-)
+DEBUG=True
+
+TEMPLATES = [
+    {
+        'BACKEND': 'django.template.backends.django.DjangoTemplates',
+		#Hard coding path for now. Try without this path or use Base_dir as described here; #https://stackoverflow.com/questions/3038459/django-template-path
+        'DIRS': [],
+        'APP_DIRS': True,
+        'OPTIONS': {
+            'context_processors': [
+                'django.contrib.auth.context_processors.auth',
+                'django.template.context_processors.debug',
+                'django.template.context_processors.i18n',
+                'django.template.context_processors.media',
+                'django.template.context_processors.static',
+                'django.template.context_processors.tz',
+                'django.contrib.messages.context_processors.messages',
+				'missions.contextprocessors.context_processors.version_number',
+            ],
+			# SECURITY WARNING
+			# We run in debug mode so that static files are automatically served
+			# out by the built-in django webserver for ease of setup. Since you're already running
+			# this on a trusted network (remember the security warning at the top of this file) you
+			# are probably okay doing the same.
+			'debug': DEBUG,
+        },
+    },
+]
 
 ROOT_URLCONF = 'dart.urls'
 
@@ -107,8 +116,9 @@ MEDIA_URL = '/data/'
 
 # Bootstrap Settings
 BOOTSTRAP3 = {
+    'css_url': STATIC_URL + 'base/css/bootstrap.min.css',
+    'javascript_url': STATIC_URL + 'base/js/bootstrap.min.js',
     'jquery_url': STATIC_URL + 'base/js/jquery.min.js',
-    'base_url': STATIC_URL + 'base/',
     'required_css_class': 'required',
 }
 
