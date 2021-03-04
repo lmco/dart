@@ -1,4 +1,4 @@
-FROM alpine:latest
+FROM alpine:3.11
 LABEL maintainer Lockheed Martin Red Team
 
 # Copyright 2017 Lockheed Martin Corporation
