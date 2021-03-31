@@ -20,5 +20,5 @@ django-bootstrap3==11.0.0
 # For the moment, we'll just pin to 3.6.0 so that way the prepper will download all
 # dependencies (thinking ahead to nix/docker friendliness) and pip install on Win will
 # prefer the appropriate wheel over the source version.
-lxml==3.6.0
+lxml==4.6.3
 python-docx==0.8.6
