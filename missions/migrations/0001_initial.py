@@ -1,5 +1,20 @@
+# Copyright 2023 Lockheed Martin Corporation
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+# http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+#
+
 # -*- coding: utf-8 -*-
-from __future__ import unicode_literals
+
 
 from django.db import migrations, models
 import django.utils.timezone
@@ -42,7 +57,7 @@ class Migration(migrations.Migration):
             fields=[
                 ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
                 ('host_output_format', models.CharField(default=b'{ip} ({name})', help_text=b'Use "{ip}" and "{name}" to specify how you want hosts to be displayed.', max_length=50, validators=[missions.extras.validators.validate_host_format_string])),
-                ('system_classification', models.ForeignKey(to='missions.ClassificationLegend')),
+                ('system_classification', models.ForeignKey(to='missions.ClassificationLegend', on_delete=models.CASCADE)),
             ],
         ),
         migrations.CreateModel(
@@ -82,7 +97,7 @@ class Migration(migrations.Migration):
                 ('supporting_data_include_flag', models.BooleanField(default=True, verbose_name=b'Mission Option: Include Supporting Data Information in report?')),
                 ('customer_notes_include_flag', models.BooleanField(default=True, verbose_name=b'Mission Option: Include customer notes section in report?')),
                 ('testdetail_sort_order', models.TextField(default=b'[]', blank=True)),
-                ('business_area', models.ForeignKey(verbose_name=b'Business Area', to='missions.BusinessArea')),
+                ('business_area', models.ForeignKey(verbose_name=b'Business Area', to='missions.BusinessArea',on_delete=models.CASCADE)),
             ],
         ),
         migrations.CreateModel(
@@ -130,7 +145,7 @@ class Migration(migrations.Migration):
                 ('mitigation', models.TextField(help_text=b'Example: Configure xyz, implement xyz, etc.', verbose_name=b'Mitigation', blank=True)),
                 ('mitigation_include_flag', models.BooleanField(default=True, verbose_name=b'Include Mitigations in report?')),
                 ('point_of_contact', models.CharField(default=b'', help_text=b'Individual working or most familiar with this test case.', max_length=20, verbose_name=b'POC', blank=True)),
-                ('mission', models.ForeignKey(verbose_name=b'Mission', to='missions.Mission')),
+                ('mission', models.ForeignKey(verbose_name=b'Mission', to='missions.Mission',on_delete=models.CASCADE)),
                 ('source_hosts', models.ManyToManyField(related_name='source_set', to='missions.Host')),
                 ('target_hosts', models.ManyToManyField(related_name='target_set', to='missions.Host')),
             ],
@@ -138,21 +153,21 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name='supportingdata',
             name='test_detail',
-            field=models.ForeignKey(verbose_name=b'Test Details', to='missions.TestDetail'),
+            field=models.ForeignKey(verbose_name=b'Test Details', to='missions.TestDetail',on_delete=models.CASCADE),
         ),
         migrations.AddField(
             model_name='host',
             name='mission',
-            field=models.ForeignKey(to='missions.Mission'),
+            field=models.ForeignKey(to='missions.Mission',on_delete=models.CASCADE),
         ),
         migrations.AddField(
             model_name='classificationlegend',
             name='background_color',
-            field=models.ForeignKey(related_name='classificationlegend_background_set', to='missions.Color'),
+            field=models.ForeignKey(related_name='classificationlegend_background_set', to='missions.Color',on_delete=models.CASCADE),
         ),
         migrations.AddField(
             model_name='classificationlegend',
             name='text_color',
-            field=models.ForeignKey(related_name='classificationlegend_text_set', to='missions.Color'),
+            field=models.ForeignKey(related_name='classificationlegend_text_set', to='missions.Color',on_delete=models.CASCADE),
         ),
     ]

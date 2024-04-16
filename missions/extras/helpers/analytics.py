@@ -1,10 +1,10 @@
-# Copyright 2017 Lockheed Martin Corporation
+# Copyright 2023 Lockheed Martin Corporation
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
 # You may obtain a copy of the License at
 #
-#     http://www.apache.org/licenses/LICENSE-2.0
+# http://www.apache.org/licenses/LICENSE-2.0
 #
 # Unless required by applicable law or agreed to in writing, software
 # distributed under the License is distributed on an "AS IS" BASIS,
@@ -13,7 +13,6 @@
 # limitations under the License.
 #
 
-from __future__ import division
 from collections import Counter, defaultdict
 
 import logging
@@ -35,7 +34,7 @@ class MissionAnalytics(object):
         self.test_case_types_by_mission_week = self._count_of_test_case_types_by_mission_week()
 
     def count_of_findings(self):
-        count = self.testcases.exclude(findings=u'').count()
+        count = self.testcases.exclude(findings='').count()
         return count
 
     def count_of_test_cases(self):
@@ -43,11 +42,11 @@ class MissionAnalytics(object):
         return count
 
     def count_of_executed_test_cases(self):
-        count = self.testcases.exclude(execution_status=u'N').count()
+        count = self.testcases.exclude(execution_status='N').count()
         return count
 
     def count_of_test_cases_approved(self):
-        count = self.testcases.filter(test_case_status=u'FINAL').count()
+        count = self.testcases.filter(test_case_status='FINAL').count()
         return count
 
     def mission_execution_percentage(self):
@@ -103,7 +102,7 @@ class MissionAnalytics(object):
             return [0]
 
         # Get the execution date for each test case in the mission
-        tc_dates = self.testcases.exclude(execution_status=u'N').values('attack_time_date')
+        tc_dates = self.testcases.exclude(execution_status='N').values('attack_time_date')
 
         # Create a hashmap of the count of TCs per iso calendar week
         weekly_count = Counter()
@@ -119,7 +118,7 @@ class MissionAnalytics(object):
 
         # Build a hashmap of week # and the associated count
         zero_indexed_weekly_count = [0] * week_delta
-        for week, count in weekly_count.items():
+        for week, count in list(weekly_count.items()):
             zero_indexed_weekly_count[week - first_week] = count
 
         return zero_indexed_weekly_count
@@ -138,7 +137,7 @@ class MissionAnalytics(object):
             return [['No TCs have been executed yet!']]
 
         # Get the execution date & type for each executed test case in the mission
-        tc_records = self.testcases.exclude(execution_status=u'N').values('attack_time_date', 'attack_phase')
+        tc_records = self.testcases.exclude(execution_status='N').values('attack_time_date', 'attack_phase')
 
         # Create a hashmap of the count of TCs per iso calendar week
         weekly_count = defaultdict(Counter)
@@ -159,7 +158,7 @@ class MissionAnalytics(object):
 
         header_row = list()
         header_row.append('')
-        header_row.extend(range(1, week_delta))
+        header_row.extend(list(range(1, week_delta)))
 
         total_row = list()
         total_row.append('TOTAL')
@@ -169,7 +168,7 @@ class MissionAnalytics(object):
             phase = phase_tuple[0]
             phase_row = [0] * (week_delta + 1)
             phase_row[0] = phase
-            for week, attack_phase_counter in weekly_count.items():
+            for week, attack_phase_counter in list(weekly_count.items()):
                 column = week - first_week + 1
                 phase_row[column] = attack_phase_counter[phase]
                 total_row[column] += attack_phase_counter[phase]

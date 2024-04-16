@@ -1,12 +1,10 @@
-# -*- coding: utf-8 -*-
-
-# Copyright 2017 Lockheed Martin Corporation
+# Copyright 2023 Lockheed Martin Corporation
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
 # You may obtain a copy of the License at
 #
-#     http://www.apache.org/licenses/LICENSE-2.0
+# http://www.apache.org/licenses/LICENSE-2.0
 #
 # Unless required by applicable law or agreed to in writing, software
 # distributed under the License is distributed on an "AS IS" BASIS,
@@ -31,7 +29,7 @@ DART_VERSION_NUMBER = '2.1.0'
 # We are not randomizing this key for you.
 SECRET_KEY = '5s9G+t##Trga48t594g1g8sret*(#*/rg-dfgs43wt)((dh/*d'
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['*']
 
 # Application definition
 
@@ -48,15 +46,13 @@ INSTALLED_APPS = (
     'missions.apps.MissionsConfig',
 )
 
-MIDDLEWARE_CLASSES = (
+MIDDLEWARE = (
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
-    'django.contrib.auth.middleware.SessionAuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
-    #'missions.middleware.RequiredInterstitial', # Uncomment and see related setting below if you require an interstitial
 )
 
 DEBUG=True
@@ -77,6 +73,7 @@ TEMPLATES = [
                 'django.template.context_processors.tz',
                 'django.contrib.messages.context_processors.messages',
 				'missions.contextprocessors.context_processors.version_number',
+                'django.template.context_processors.request'
             ],
 			# SECURITY WARNING
 			# We run in debug mode so that static files are automatically served
@@ -84,18 +81,21 @@ TEMPLATES = [
 			# this on a trusted network (remember the security warning at the top of this file) you
 			# are probably okay doing the same.
 			'debug': DEBUG,
+            'libraries' : {
+                'staticfiles': 'django.templatetags.static', 
+            }
         },
     },
 ]
 
 ROOT_URLCONF = 'dart.urls'
 
-WSGI_APPLICATION = 'dart.wsgi.application'
+# WSGI_APPLICATION = 'dart.wsgi.application'
 
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
+        'NAME': os.path.join(BASE_DIR, 'data/db.sqlite3'),
     }
 }
 
@@ -111,14 +111,14 @@ USE_TZ = True
 
 STATIC_URL = '/static/'
 
-MEDIA_ROOT = os.path.join(BASE_DIR, 'supporting_data')
 MEDIA_URL = '/data/'
+MEDIA_ROOT = os.path.join(BASE_DIR, 'supporting_data')
 
 # Bootstrap Settings
 BOOTSTRAP3 = {
-    'css_url': STATIC_URL + 'base/css/bootstrap.min.css',
-    'javascript_url': STATIC_URL + 'base/js/bootstrap.min.js',
-    'jquery_url': STATIC_URL + 'base/js/jquery.min.js',
+    'css_url': STATIC_URL + 'vendor/css/bootstrap.min.css',
+    'javascript_url': STATIC_URL + 'vendor/js/bootstrap.min.js',
+    'jquery_url': STATIC_URL + 'vendor/js/jquery.min.js',
     'required_css_class': 'required',
 }
 
@@ -129,7 +129,7 @@ LOGGING = {
         'debug_file': {
             'level': 'DEBUG',
             'class': 'logging.handlers.RotatingFileHandler',
-            'filename': os.path.join(BASE_DIR, 'debug.log'),
+            'filename': os.path.join(BASE_DIR, 'logs/debug.log'),
             'maxBytes': 20000000,  # 20MB
             'backupCount': 10,
             'formatter': 'verbose',
@@ -137,7 +137,7 @@ LOGGING = {
         'info_file': {
             'level': 'INFO',
             'class': 'logging.FileHandler',
-            'filename': os.path.join(BASE_DIR, 'info.log'),
+            'filename': os.path.join(BASE_DIR, 'logs/info.log'),
             'formatter': 'verbose',
         },
     },
@@ -159,7 +159,7 @@ LOGGING = {
 }
 
 REPORT_TEMPLATE_PATH = os.path.join(BASE_DIR, '2016_Template.docx')
-
+DEFAULT_AUTO_FIELD = 'django.db.models.AutoField' 
 
 # Require an interstitial message to be displayed
 #
