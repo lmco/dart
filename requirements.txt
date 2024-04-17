@@ -14,5 +14,5 @@
 #
 
 python-docx==0.8.11
-django==3.2.9
+django==3.2.25
 django-bootstrap3==21.1.0
