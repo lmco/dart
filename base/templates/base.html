@@ -1,11 +1,12 @@
 {% comment %}
-# Copyright 2017 Lockheed Martin Corporation
+<!--
+# Copyright 2024 Lockheed Martin Corporation
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
 # You may obtain a copy of the License at
 #
-#     http://www.apache.org/licenses/LICENSE-2.0
+# http://www.apache.org/licenses/LICENSE-2.0
 #
 # Unless required by applicable law or agreed to in writing, software
 # distributed under the License is distributed on an "AS IS" BASIS,
@@ -13,9 +14,9 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 #
+-->
 {% endcomment %}
-
-{% load staticfiles %}
+{% load static %}
 {% load bootstrap3 %}
 {% load quickparts %}
 {% load cache %}
@@ -31,28 +32,26 @@
     <title>DART - {% block title %}{% endblock %}</title>
 
     {% bootstrap_css %}
-    <!-- Custom styles for this template -->
-    <link href='{% static "base/css/jumbotron.css" %}' rel="stylesheet">
 
     <!-- jQueryUI CSS -->
-    <link href='{% static "base/css/jquery-ui.min.css" %}' rel="stylesheet">
-    <link href='{% static "base/css/jquery-ui.structure.min.css" %}' rel="stylesheet">
-    <link href='{% static "base/css/jquery-ui.theme.min.css" %}' rel="stylesheet">
+    <link href='{% static "vendor/css/jquery-ui.min.css" %}' rel="stylesheet">
+    <link href='{% static "vendor/css/jquery-ui.structure.min.css" %}' rel="stylesheet">
+    <link href='{% static "vendor/css/jquery-ui.theme.min.css" %}' rel="stylesheet">
 
     <!-- DART CSS Overrides -->
     <link href='{% static "base/css/dart-css-overrides.css" %}' rel="stylesheet">
 
     <!-- Bootstrap's js requires jQuery -->
-    <script src="{% static 'base/js/jquery-2.1.4.min.js' %}" type="text/javascript"></script>
+    <script src="{% static 'vendor/js/jquery-2.1.4.min.js' %}" type="text/javascript"></script>
 
     <!-- Adding jQueryUI for some interactions -->
-    <script src="{% static 'base/js/jquery-ui.min.js' %}" type="text/javascript"></script>
+    <script src="{% static 'vendor/js/jquery-ui.min.js' %}" type="text/javascript"></script>
 
     <!-- jQuery AYS: track unsaved changes and alert on close without save
     Source: https://github.com/codedance/jquery.AreYouSure -->
-    <script src="{% static 'base/js/jquery.are-you-sure.js' %}" type="text/javascript"></script>
+    <script src="{% static 'vendor/js/jquery.are-you-sure.js' %}" type="text/javascript"></script>
     <!-- jQuery AYS shim to work with iOS browsers -->
-    <script src="{% static 'base/js/jquery.are-you-sure-shim.js' %}" type="text/javascript"></script>
+    <script src="{% static 'vendor/js/jquery.are-you-sure-shim.js' %}" type="text/javascript"></script>
   {% block additional_head_content %}{% endblock %}
   </head>
 
@@ -136,7 +135,7 @@
     {% bootstrap_javascript %}
 
      <!-- Moment.js JavaScript -->
-    <script src="{% static 'base/js/moment.min.js' %}"></script>
+    <script src="{% static 'vendor/js/moment.min.js' %}"></script>
 
     <!-- DART JavaScript -->
     <script src="{% static 'base/js/dart.js' %}"></script>

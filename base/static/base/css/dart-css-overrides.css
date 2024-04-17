@@ -1,11 +1,11 @@
 /*
-# Copyright 2017 Lockheed Martin Corporation
+# Copyright 2024 Lockheed Martin Corporation
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
 # You may obtain a copy of the License at
 #
-#     http://www.apache.org/licenses/LICENSE-2.0
+# http://www.apache.org/licenses/LICENSE-2.0
 #
 # Unless required by applicable law or agreed to in writing, software
 # distributed under the License is distributed on an "AS IS" BASIS,
@@ -56,6 +56,7 @@ table a:hover {
     height:20px;
     text-align: center;
     font-weight: bold;
+    z-index: 100;
 }
 
 .lm-prop-legend-top {
@@ -76,10 +77,11 @@ table a:hover {
     height:20px;
     text-align: center;
     font-weight: bold;
+    z-index: 100;
 }
 
 .page-header {
-    margin-top: 60px;
+    margin-top: 100px;
 }
 
 /* Edit Hosts Modal Styles */

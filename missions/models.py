@@ -1,12 +1,10 @@
-# -*- coding: utf-8 -*-
-
-# Copyright 2017 Lockheed Martin Corporation
+# Copyright 2024 Lockheed Martin Corporation
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
 # You may obtain a copy of the License at
 #
-#     http://www.apache.org/licenses/LICENSE-2.0
+# http://www.apache.org/licenses/LICENSE-2.0
 #
 # Unless required by applicable law or agreed to in writing, software
 # distributed under the License is distributed on an "AS IS" BASIS,
@@ -22,11 +20,11 @@ from django.db import models
 from django.db.models.signals import post_delete
 from django.dispatch.dispatcher import receiver
 from django.utils import timezone
-from django.core.urlresolvers import reverse_lazy
+from django.urls import reverse_lazy
 from django.conf import settings
 
-from extras.helpers.formatters import join_as_compacted_paragraphs
-from extras.validators import validate_host_format_string
+from .extras.helpers.formatters import join_as_compacted_paragraphs
+from .extras.validators import validate_host_format_string
 
 
 """
@@ -95,6 +93,7 @@ class Mission(models.Model):
     business_area = models.ForeignKey(
         'BusinessArea',
         verbose_name="Business Area",
+        on_delete=models.CASCADE,
     )
 
     introduction = models.TextField(
@@ -220,7 +219,8 @@ class Mission(models.Model):
 
 class Host(models.Model):
     mission = models.ForeignKey(
-        Mission
+        Mission,
+        on_delete=models.CASCADE,
     )
 
     host_name = models.CharField(
@@ -255,7 +255,7 @@ class Host(models.Model):
 
 
 class TestDetail(models.Model):
-    mission = models.ForeignKey(Mission, verbose_name="Mission")
+    mission = models.ForeignKey(Mission, verbose_name="Mission", on_delete=models.CASCADE,)
 
     test_number = models.IntegerField(
         blank=False,
@@ -503,7 +503,7 @@ class TestDetail(models.Model):
 
 
 class SupportingData(models.Model):
-    test_detail = models.ForeignKey(TestDetail, verbose_name="Test Details")
+    test_detail = models.ForeignKey(TestDetail, verbose_name="Test Details",on_delete=models.CASCADE,)
 
     caption = models.TextField(
         blank=True,
@@ -566,11 +566,13 @@ class ClassificationLegend(models.Model):
     text_color = models.ForeignKey(
         'Color',
         related_name='classificationlegend_text_set',
+        on_delete=models.CASCADE,
     )
 
     background_color = models.ForeignKey(
         'Color',
         related_name='classificationlegend_background_set',
+        on_delete=models.CASCADE,
     )
 
     REPORT_LABEL_COLOR_OPTIONS = (
@@ -613,6 +615,7 @@ class DARTDynamicSettingsManager(models.Manager):
 class DARTDynamicSettings(models.Model):
     system_classification = models.ForeignKey(
         'ClassificationLegend',
+        on_delete=models.CASCADE,
     )
 
     host_output_format = models.CharField(

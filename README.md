@@ -3,6 +3,8 @@
 DART is a test documentation tool created by the Lockheed Martin Red Team to
 document and report on penetration tests, especially in isolated network environments. 
 
+# This works with python 3.9
+
 The goals of this tool are:
 
 - __Easy__
@@ -42,93 +44,18 @@ intended for deployment on untrusted networks.
 
 DART is tested to work in the following configurations:
 
-- Windows 7 system install
-- Docker (Experimental, read the warning in the Dockerfile)
+- Windows
+- Linux
+- Mac
+- Docker
 
 Other configurations will likely be successful, however we do not 
 currently test DART's operation in these configurations.
 
-The installation instructions are comprised of two steps - a dependency collection 
-step performed on an internet-connected machine and an installation step performed 
-on the isolated network.
+### Installation
 
-### Installing on Windows 7 (system-wide)
-
-_On an internet-connected machine:_
-
-- Online system must meet the following requirements for automated scripts to work:
-  - Python 2.7 must be already installed (`python --version` to check)
-  - **pip version must be > 9.0** (`pip --version` to check; `pip install -U pip` to update)
-
-- Clone the repo & get the dependencies
-
-```
-git clone https://github.com/lmco/dart.git
-cd dart
-python install\online\prep.py
-```
-
-> **Note:** Some command line options, like `--proxy` are supported for your convenience. Use `python install\online\prep.py --help` for more info.
-
-- Copy to offline machine
-
-_On the isolated machine:_
-
-- Offline system must meet the following requirements for automated scripts to work:
-  - You must have administrative credentials (required for python installation)
-
-- Install the dependencies
-
-```
-cd dart
-install\offline\install.bat
-```
-
-- First Run Setup
-
-```
-python install\offline\setup.py
-```
-
-Basic DART installation and database creation is now complete. In addition you've 
-loaded in common classification colors, a basic classification list, and some common
-business areas you may have.
-
-> **PRO TIP** If you have additional classifications or business areas in your 
-> company, you can create a additional private entries for internal use
-> by adding them (following the existing format) to the files in dart/missions/fixtures.
-
-### Starting DART
-
-```
-python run.py
-```
-
-### Stopping DART
-
-```
-<CTRL+C>
-```
-
-## Connecting to DART
-
-- Localhost: `127.0.0.1:8000`
-- LAN: `<server_ip_address>:8000`
-
-## Performing a version upgrade
-
-- With the exception of the following files / locations, replace all DART files (copy and pasting the whole folder should be fine)
-  - db.sqlite
-  - SUPPORTING\_DATA\_PACKAGE/
-  - supporting_data/
-- Run the following commands
-
-```
-cd dart
-python manage.py migrate
-```
-
-- Start DART normally
+- [Local install instructions](docs/local-setup.md)
+- [Docker install instructions](docs/docker-setup.md)
 
 ## Frequently Asked Questions
 
