@@ -1,3 +1,4 @@
+<!--
 # Copyright 2024 Lockheed Martin Corporation
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
@@ -12,7 +13,35 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 #
+-->
 
-python-docx==0.8.11
-django==3.2.25
-django-bootstrap3==21.1.0
+# Changelog
+
+>All notable changes to this project will be documented in this file.
+>
+>The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/), and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
+
+<hr>
+
+## [v2.1.1] - 2024-04-25
+
+### Changed
+
+* Django version 3.2.25
+* README copyright year
+
+
+## [v2.1.0] - 2024-03-01
+
+### Added
+
+* Changelog file 
+
+### Changed
+
+* Python version >=3.9
+* Local installation process update
+
+### Fixed
+
+* Docker build process
