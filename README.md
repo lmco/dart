@@ -86,4 +86,5 @@ in this tool today.
   supporting documentation folder, and outputs should be treated as sensitive, and
   handled as export controlled / classified information, as appropriate.
 
-&copy; 2017 Lockheed Martin Corporation
+
+&copy; 2024 Lockheed Martin Corporation
