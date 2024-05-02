@@ -17,17 +17,16 @@
 -->
 {% endcomment %}
 {# Requires testdetail to be set to a test case record #}
-
 <div class="form-group">
     <label class="control-label" for="id_hosts">Hosts</label>
-    <div id="id_hosts" class="well row" title="Hosts this test case applies to">
+    <div id="id_hosts"
+         class="well row"
+         title="Hosts this test case applies to">
         <div id="sources" class="col-md-6">
             <label class="control-label">Sources</label>
             <div>
                 <div id="sourceHostsList">
-                    {% for host in testdetail.source_hosts.all %}
-                        <div>{{ host }}</div>
-                    {% endfor %}
+                    {% for host in testdetail.source_hosts.all %}<div>{{ host }}</div>{% endfor %}
                 </div>
             </div>
         </div>
@@ -35,9 +34,7 @@
             <label class="control-label">Targets</label>
             <div>
                 <div id="targetHostsList">
-                    {% for host in testdetail.target_hosts.all %}
-                        <div>{{ host }}</div>
-                    {% endfor %}
+                    {% for host in testdetail.target_hosts.all %}<div>{{ host }}</div>{% endfor %}
                 </div>
             </div>
         </div>

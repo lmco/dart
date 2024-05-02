@@ -21,15 +21,14 @@ from django.db import migrations, models
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
-        ('missions', '0003_auto_event-id'),
+        ("missions", "0003_auto_event-id"),
     ]
 
     operations = [
         migrations.AddField(
-            model_name='testdetail',
-            name='supporting_data_sort_order',
-            field=models.TextField(blank=True, default=b'[]'),
+            model_name="testdetail",
+            name="supporting_data_sort_order",
+            field=models.TextField(blank=True, default=b"[]"),
         ),
     ]

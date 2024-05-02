@@ -18,31 +18,27 @@
 -->
 {% endcomment %}
 {% load bootstrap3 %}
-
-{% block title %}
-    DART Dynamic System Settings
-{% endblock %}
-
-{% block main_heading %}
-    <h1 class="page-header">
-        DART Dynamic System Settings
-    </h1>
-{% endblock %}
-
+{% block title %}DART Dynamic System Settings{% endblock %}
+{% block main_heading %}<h1 class="page-header">DART Dynamic System Settings</h1>{% endblock %}
 {% block content %}
-<form method="POST" enctype="multipart/form-data">
-{% csrf_token %}
-{% bootstrap_form form %}
-    <div class="btn-group btn-group-justified" role="group">
-        <a id="business-area-update-button" class="btn btn-default" href="{% url 'list-business-areas' %}">Edit Business Areas</a>
-        <a id="classification-update-button" class="btn btn-default" href="{% url 'list-classifications' %}">Edit Classifications</a>
-        <a id="color-update-button" class="btn btn-default" href="{% url 'list-colors' %}">Edit Colors</a>
-    </div>
-    <br /><br />
-{% buttons %}
-    <button type="submit" class="btn btn-primary">
-        {% bootstrap_icon "star" %} Submit
-    </button>
-{% endbuttons %}
+    <form method="POST" enctype="multipart/form-data">
+        {% csrf_token %}
+        {% bootstrap_form form %}
+        <div class="btn-group btn-group-justified" role="group">
+            <a id="business-area-update-button"
+               class="btn btn-default"
+               href="{% url 'list-business-areas' %}">Edit Business Areas</a>
+            <a id="classification-update-button"
+               class="btn btn-default"
+               href="{% url 'list-classifications' %}">Edit Classifications</a>
+            <a id="color-update-button"
+               class="btn btn-default"
+               href="{% url 'list-colors' %}">Edit Colors</a>
+        </div>
+        <br />
+        <br />
+        {% buttons %}
+        <button type="submit" class="btn btn-primary">{% bootstrap_icon "star" %} Submit</button>
+    {% endbuttons %}
 </form>
 {% endblock %}

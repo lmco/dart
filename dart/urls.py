@@ -19,55 +19,93 @@ from django.views.generic import RedirectView
 from django.contrib.staticfiles.urls import staticfiles_urlpatterns
 import missions.views
 from django.contrib.auth.decorators import login_required
-from django.contrib.auth import logout, login
 from django.views.static import serve
 from django.conf import settings
 from django.contrib.auth.views import LoginView, LogoutView
 
 urlpatterns = [
-    url(r'^missions/', include('missions.urls')),
-
-    url(r'^$', RedirectView.as_view(url='/missions/', permanent=False)),
-
-    url(r'^admin/', admin.site.urls),
-
-    url(r'^accounts/logout/$', LogoutView.as_view(template_name='login.html'), name='logout'),
-    #url(r'^accounts/logout/$', logout, name='logout'),
-    #url(r'^accounts/login/$', login, {'template_name': 'login.html'}, name='login'),
-    url(r'^accounts/login/$',  LoginView.as_view(template_name='login.html'), name='login'),
-    url(r'^accounts/$', RedirectView.as_view(url='/', permanent=False)),
-    url(r'^accounts/profile/$', RedirectView.as_view(url='/', permanent=False)),
-
-    url(r'^settings/$',
-        login_required(missions.views.UpdateDynamicSettingsView.as_view()), name='update-settings'),
-    url(r'^settings/business-areas/$',
-        login_required(missions.views.BusinessAreaListView.as_view()), name='list-business-areas'),
-    url(r'^settings/update-business-area(?:/(?P<pk>\d+))?/$',
-        login_required(missions.views.business_area_handler), name='update-business-area'),
-    url(r'^settings/classifications/$',
-        login_required(missions.views.ClassificationListView.as_view()), name='list-classifications'),
-    url(r'^settings/update-classification(?:/(?P<pk>\d+))?/$',
-        login_required(missions.views.classification_handler), name='update-classification'),
-    url(r'^settings/colors/$',
-        login_required(missions.views.ColorListView.as_view()), name='list-colors'),
-    url(r'^settings/update-color(?:/(?P<pk>\d+))?/$',
-        login_required(missions.views.color_handler), name='update-color'),
-    url(r'^settings/create-account/$',
-        missions.views.CreateAccountView.as_view(), name='create-account'),
-
-    url(r'^login-interstitial/$',
-        login_required(missions.views.LoginInterstitialView.as_view()), name='login-interstitial'),
-
-    url(r'^about/$',
-        login_required(missions.views.AboutTemplateView.as_view()), name='about'),
-
-    url(r'^hosts/(?P<host_id>\d+)/$',
-        login_required(missions.views.mission_host_handler), name='host-detail'),
-
-    url(r'^data/(?P<supportingdata>\d+)/$',
-        login_required(missions.views.DownloadSupportingDataView.as_view()), name='data-view'),
-    url(r'^data/(?P<path>.*)$',
-        serve,{'document_root': settings.MEDIA_ROOT, 'show_indexes': False}),
+    url(r"^missions/", include("missions.urls")),
+    url(r"^$", RedirectView.as_view(url="/missions/", permanent=False)),
+    url(r"^admin/", admin.site.urls),
+    url(
+        r"^accounts/logout/$",
+        LogoutView.as_view(template_name="login.html"),
+        name="logout",
+    ),
+    # url(r'^accounts/logout/$', logout, name='logout'),
+    # url(r'^accounts/login/$', login, {'template_name': 'login.html'}, name='login'),
+    url(
+        r"^accounts/login/$",
+        LoginView.as_view(template_name="login.html"),
+        name="login",
+    ),
+    url(r"^accounts/$", RedirectView.as_view(url="/", permanent=False)),
+    url(r"^accounts/profile/$", RedirectView.as_view(url="/", permanent=False)),
+    url(
+        r"^settings/$",
+        login_required(missions.views.UpdateDynamicSettingsView.as_view()),
+        name="update-settings",
+    ),
+    url(
+        r"^settings/business-areas/$",
+        login_required(missions.views.BusinessAreaListView.as_view()),
+        name="list-business-areas",
+    ),
+    url(
+        r"^settings/update-business-area(?:/(?P<pk>\d+))?/$",
+        login_required(missions.views.business_area_handler),
+        name="update-business-area",
+    ),
+    url(
+        r"^settings/classifications/$",
+        login_required(missions.views.ClassificationListView.as_view()),
+        name="list-classifications",
+    ),
+    url(
+        r"^settings/update-classification(?:/(?P<pk>\d+))?/$",
+        login_required(missions.views.classification_handler),
+        name="update-classification",
+    ),
+    url(
+        r"^settings/colors/$",
+        login_required(missions.views.ColorListView.as_view()),
+        name="list-colors",
+    ),
+    url(
+        r"^settings/update-color(?:/(?P<pk>\d+))?/$",
+        login_required(missions.views.color_handler),
+        name="update-color",
+    ),
+    url(
+        r"^settings/create-account/$",
+        missions.views.CreateAccountView.as_view(),
+        name="create-account",
+    ),
+    url(
+        r"^login-interstitial/$",
+        login_required(missions.views.LoginInterstitialView.as_view()),
+        name="login-interstitial",
+    ),
+    url(
+        r"^about/$",
+        login_required(missions.views.AboutTemplateView.as_view()),
+        name="about",
+    ),
+    url(
+        r"^hosts/(?P<host_id>\d+)/$",
+        login_required(missions.views.mission_host_handler),
+        name="host-detail",
+    ),
+    url(
+        r"^data/(?P<supportingdata>\d+)/$",
+        login_required(missions.views.DownloadSupportingDataView.as_view()),
+        name="data-view",
+    ),
+    url(
+        r"^data/(?P<path>.*)$",
+        serve,
+        {"document_root": settings.MEDIA_ROOT, "show_indexes": False},
+    ),
 ]
 
 urlpatterns += staticfiles_urlpatterns()

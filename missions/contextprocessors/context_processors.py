@@ -17,4 +17,4 @@ from django.conf import settings
 
 
 def version_number(request):
-    return {'DART_VERSION_NUMBER': settings.DART_VERSION_NUMBER}
+    return {"DART_VERSION_NUMBER": settings.DART_VERSION_NUMBER}

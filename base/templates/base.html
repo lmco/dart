@@ -20,190 +20,210 @@
 {% load bootstrap3 %}
 {% load quickparts %}
 {% load cache %}
-
-
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="utf-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-
-    <title>DART - {% block title %}{% endblock %}</title>
-
-    {% bootstrap_css %}
-
-    <!-- jQueryUI CSS -->
-    <link href='{% static "vendor/css/jquery-ui.min.css" %}' rel="stylesheet">
-    <link href='{% static "vendor/css/jquery-ui.structure.min.css" %}' rel="stylesheet">
-    <link href='{% static "vendor/css/jquery-ui.theme.min.css" %}' rel="stylesheet">
-
-    <!-- DART CSS Overrides -->
-    <link href='{% static "base/css/dart-css-overrides.css" %}' rel="stylesheet">
-
-    <!-- Bootstrap's js requires jQuery -->
-    <script src="{% static 'vendor/js/jquery-2.1.4.min.js' %}" type="text/javascript"></script>
-
-    <!-- Adding jQueryUI for some interactions -->
-    <script src="{% static 'vendor/js/jquery-ui.min.js' %}" type="text/javascript"></script>
-
-    <!-- jQuery AYS: track unsaved changes and alert on close without save
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <title>DART -
+            {% block title %}{% endblock %}
+        </title>
+        {% bootstrap_css %}
+        <!-- jQueryUI CSS -->
+        <link href='{% static "vendor/css/jquery-ui.min.css" %}' rel="stylesheet">
+        <link href='{% static "vendor/css/jquery-ui.structure.min.css" %}'
+              rel="stylesheet">
+        <link href='{% static "vendor/css/jquery-ui.theme.min.css" %}'
+              rel="stylesheet">
+        <!-- DART CSS Overrides -->
+        <link href='{% static "base/css/dart-css-overrides.css" %}'
+              rel="stylesheet">
+        <!-- Bootstrap's js requires jQuery -->
+        <script src="{% static 'vendor/js/jquery-2.1.4.min.js' %}"
+                type="text/javascript"></script>
+        <!-- Adding jQueryUI for some interactions -->
+        <script src="{% static 'vendor/js/jquery-ui.min.js' %}"
+                type="text/javascript"></script>
+        <!-- jQuery AYS: track unsaved changes and alert on close without save
     Source: https://github.com/codedance/jquery.AreYouSure -->
-    <script src="{% static 'vendor/js/jquery.are-you-sure.js' %}" type="text/javascript"></script>
-    <!-- jQuery AYS shim to work with iOS browsers -->
-    <script src="{% static 'vendor/js/jquery.are-you-sure-shim.js' %}" type="text/javascript"></script>
-  {% block additional_head_content %}{% endblock %}
-  </head>
-
-  <body>
-    <div class="navbar navbar-inverse navbar-fixed-top" role="navigation">
-        {% cache 600 legend_partial_top %}{% legend_partial 'top' %}{% endcache %}
-      <div class="container">
-        <div class="navbar-header">
-          <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target=".navbar-collapse">
-            <span class="sr-only">Toggle navigation</span>
-            <span class="icon-bar"></span>
-            <span class="icon-bar"></span>
-            <span class="icon-bar"></span>
-          </button>
-          <a class="navbar-brand" href="{% url 'missions-list' %}">DART</a>
+        <script src="{% static 'vendor/js/jquery.are-you-sure.js' %}"
+                type="text/javascript"></script>
+        <!-- jQuery AYS shim to work with iOS browsers -->
+        <script src="{% static 'vendor/js/jquery.are-you-sure-shim.js' %}"
+                type="text/javascript"></script>
+        {% block additional_head_content %}{% endblock %}
+    </head>
+    <body>
+        <div class="navbar navbar-inverse navbar-fixed-top" role="navigation">
+            {% cache 600 legend_partial_top %}{% legend_partial 'top' %}{% endcache %}
+            <div class="container">
+                <div class="navbar-header">
+                    <button type="button"
+                            class="navbar-toggle collapsed"
+                            data-toggle="collapse"
+                            data-target=".navbar-collapse">
+                        <span class="sr-only">Toggle navigation</span>
+                        <span class="icon-bar"></span>
+                        <span class="icon-bar"></span>
+                        <span class="icon-bar"></span>
+                    </button>
+                    <a class="navbar-brand" href="{% url 'missions-list' %}">DART</a>
+                </div>
+                <div class="navbar-collapse collapse">
+                    <ul class="nav navbar-nav">
+                        {% if user.is_authenticated %}
+                            <li class="">
+                                <a href="{% url 'missions-list' %}">Missions</a>
+                            </li>
+                        {% endif %}
+                        {% if this_mission %}
+                            <li>
+                                <a href="{% url 'mission-tests' mission=this_mission.id %}">{{ this_mission }} Tests</a>
+                            </li>
+                        {% endif %}
+                    </ul>
+                    {% if not user.is_authenticated %}
+                        <form class="navbar-form navbar-right"
+                              role="form"
+                              method="POST"
+                              action="{% url 'login' %}">
+                            {% csrf_token %}
+                            <div class="form-group">
+                                <input id="id_username"
+                                       type="text"
+                                       placeholder="Username"
+                                       name="username"
+                                       class="form-control">
+                            </div>
+                            <div class="form-group">
+                                <input type="password"
+                                       placeholder="Password"
+                                       name="password"
+                                       class="form-control">
+                            </div>
+                            <input type="hidden" name="next" value="/" />
+                            <button type="submit" class="btn btn-success" value="login">Login</button>
+                        </form>
+                    {% else %}
+                        <ul class="nav navbar-nav navbar-right">
+                            {% block extra_nav_bar_content_right %}{% endblock %}
+                            {% if display_navbar_save_button %}
+                                <li class="" id="navbar-form-submit-button">
+                                    <button type="button"
+                                            class="btn btn-primary navbar-btn"
+                                            onclick="javascript:submitForm()">
+                                        {% bootstrap_icon "star" %} Submit
+                                    </button>
+                                </li>
+                            {% endif %}
+                            <li class="">
+                                <a href="{% url 'logout' %}?next={% url 'login' %}">Logout</a>
+                            </li>
+                        </ul>
+                    {% endif %}
+                </div>
+                <!--/.navbar-collapse -->
+            </div>
         </div>
-        <div class="navbar-collapse collapse">
-          <ul class="nav navbar-nav">
-              {% if user.is_authenticated %}
-                <li class=""><a href="{% url 'missions-list' %}">Missions</a></li>
-              {% endif %}
-              {% if this_mission %}
-              <li>
-                  <a href="{% url 'mission-tests' mission=this_mission.id %}">{{this_mission}} Tests</a>
-              </li>
-              {% endif %}
-          </ul>
-            {% if not user.is_authenticated %}
-          <form class="navbar-form navbar-right" role="form" method="POST" action="{% url 'login' %}">
-            {% csrf_token %}
-            <div class="form-group">
-              <input id="id_username" type="text" placeholder="Username" name="username" class="form-control">
+        <div>
+            {% bootstrap_messages %}
+            <div class="container">
+                {% block main_heading %}{% endblock %}
+                {% block content %}{% endblock %}
             </div>
-            <div class="form-group">
-              <input type="password" placeholder="Password" name="password" class="form-control">
+        </div>
+        <div class="container">
+            <!-- Example row of columns -->
+            <div class="row">
+                <footer class="footer">
+                    <hr>
+                    <p>
+                        &copy; {% now "Y" %} Lockheed Martin Corporation | <a href="{% url 'about' %}">About</a>
+                        <small class="pull-right">v{{ DART_VERSION_NUMBER }}</small>
+                    </p>
+                </footer>
             </div>
-            <input type="hidden" name="next" value="/" />
-            <button type="submit" class="btn btn-success" value="login">Login</button>
-          </form>
-            {% else %}
-            <ul class="nav navbar-nav navbar-right">
-                {% block extra_nav_bar_content_right %}{% endblock %}
-                {% if display_navbar_save_button %}
-                <li class="" id="navbar-form-submit-button">
-                    <button type="button" class="btn btn-primary navbar-btn" onclick="javascript:submitForm()">
-                        {% bootstrap_icon "star" %} Submit</button>
-                </li>
-                {% endif %}
-                <li class=""><a href="{% url 'logout' %}?next={% url 'login' %}">Logout</a></li>
-            </ul>
-            {% endif %}
-        </div><!--/.navbar-collapse -->
-      </div>
-    </div>
+        </div>
+        <!-- /container -->
+        {% cache 600 legend_partial_bottom %}{% legend_partial 'bottom' %}{% endcache %}
+        <!-- Bootstrap core JavaScript -->
+        <!-- Placed at the end of the document so the pages load faster -->
+        {% bootstrap_javascript %}
+        <!-- Moment.js JavaScript -->
+        <script src="{% static 'vendor/js/moment.min.js' %}"></script>
+        <!-- DART JavaScript -->
+        <script src="{% static 'base/js/dart.js' %}"></script>
+        <!-- Add button to update attack Date/Time field -->
+        <script type="text/javascript">
+            $(document).ready(function() {
+                {
+                    %
+                    if not is_read_only %
+                }
+                $('<a href="javascript:updateAttackTime()" class="pull-right">Update to Current Time</a>').insertBefore("[for='id_attack_time_date']");
+                {
+                    % endif %
+                }
+                /*
+                 *  If there's not a submittable form on this page,
+                 *  but the navbar save button is shown for some reason,
+                 *  remove it with a vengeance
+                 */
+                if ($(".navbar-submittable-form").length < 1) {
+                    if ($("#navbar-form-submit-button").length > 0) {
+                        $("#navbar-form-submit-button").remove();
+                    }
+                }
 
-    <div>
-      {% bootstrap_messages %}
-      <div class="container">
-        {% block main_heading %}{% endblock %}
+                /*
+                 *  Fixed navbar hides content when jumping to hash locations.
+                 *  JS shim to adjust the scroll position when @ a hash url.
+                 *  Source: https://github.com/twbs/bootstrap/issues/1768
+                 */
+                var shiftWindow = function() {
+                    scrollBy(0, -85)
+                };
+                if (location.hash) shiftWindow();
+                window.addEventListener("hashchange", shiftWindow);
 
-        {% block content %}{% endblock %}
-      </div>
-    </div>
+                //Add change tracking for all input fields within forms
+                $('form').areYouSure();
+            });
 
-    <div class="container">
-      <!-- Example row of columns -->
-      <div class="row">
-        <footer class="footer">
-            <hr>
-            <p>&copy; {% now "Y" %} Lockheed Martin Corporation | <a href="{% url 'about' %}">About</a>
-            <small class="pull-right">v{{ DART_VERSION_NUMBER }}</small>
-            </p>
-        </footer>
-      </div>
-    </div> <!-- /container -->
+            function updateAttackTime() {
+                date = new Date();
 
-    {% cache 600 legend_partial_bottom %}{% legend_partial 'bottom' %}{% endcache %}
+                year = date.getFullYear().toString();
+                month = (date.getMonth() + 1).toString();
+                month = padToTwoCharacters(month);
+                day = date.getDate().toString();
+                day = padToTwoCharacters(day);
 
-    <!-- Bootstrap core JavaScript -->
-    <!-- Placed at the end of the document so the pages load faster -->
-    {% bootstrap_javascript %}
+                hour = date.getHours().toString();
+                hour = padToTwoCharacters(hour);
+                minute = date.getMinutes().toString();
+                minute = padToTwoCharacters(minute);
+                second = date.getSeconds().toString();
+                second = padToTwoCharacters(second);
 
-     <!-- Moment.js JavaScript -->
-    <script src="{% static 'vendor/js/moment.min.js' %}"></script>
+                newDateString = [year, month, day].join("-");
+                newTimeString = [hour, minute, second].join(":");
 
-    <!-- DART JavaScript -->
-    <script src="{% static 'base/js/dart.js' %}"></script>
-
-    <!-- Add button to update attack Date/Time field -->
-    <script type="text/javascript">
-    $(document).ready(function() {
-        {% if not is_read_only %}
-        $('<a href="javascript:updateAttackTime()" class="pull-right">Update to Current Time</a>').insertBefore("[for='id_attack_time_date']");
-        {% endif %}
-        /*
-        *  If there's not a submittable form on this page,
-        *  but the navbar save button is shown for some reason,
-        *  remove it with a vengeance
-        */
-        if ( $(".navbar-submittable-form").length < 1 ) {
-            if ( $("#navbar-form-submit-button").length > 0 ) {
-                $("#navbar-form-submit-button").remove();
+                $("#id_attack_time_date").attr('value', newDateString + " " + newTimeString);
             }
-        }
 
-        /*
-        *  Fixed navbar hides content when jumping to hash locations.
-        *  JS shim to adjust the scroll position when @ a hash url.
-        *  Source: https://github.com/twbs/bootstrap/issues/1768
-        */
-        var shiftWindow = function() {scrollBy(0, -85) };
-        if (location.hash) shiftWindow();
-        window.addEventListener("hashchange", shiftWindow);
+            function padToTwoCharacters(value) {
+                if (value.length < 2) {
+                    value = "0" + value;
+                }
+                return value;
+            }
 
-        //Add change tracking for all input fields within forms
-        $('form').areYouSure();
-    });
-
-    function updateAttackTime() {
-        date = new Date();
-
-        year = date.getFullYear().toString();
-        month = (date.getMonth() + 1).toString();
-        month = padToTwoCharacters(month);
-        day = date.getDate().toString();
-        day = padToTwoCharacters(day);
-
-        hour = date.getHours().toString();
-        hour = padToTwoCharacters(hour);
-        minute = date.getMinutes().toString();
-        minute = padToTwoCharacters(minute);
-        second = date.getSeconds().toString();
-        second = padToTwoCharacters(second);
-
-        newDateString = [year, month, day].join("-");
-        newTimeString = [hour, minute, second].join(":");
-
-        $("#id_attack_time_date").attr('value', newDateString + " " + newTimeString);
-    }
-
-    function padToTwoCharacters(value) {
-        if (value.length < 2) {
-            value = "0" + value;
-        }
-        return value;
-    }
-
-    /* Javascript for saving forms from the navbar button */
-    function submitForm() {
-        $(".navbar-submittable-form").submit();
-    }
-    </script>
-
-  </body>
+            /* Javascript for saving forms from the navbar button */
+            function submitForm() {
+                $(".navbar-submittable-form").submit();
+            }
+        </script>
+    </body>
 </html>

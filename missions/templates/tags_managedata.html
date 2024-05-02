@@ -17,20 +17,20 @@
 -->
 {% endcomment %}
 {% load bootstrap3 %}
-
 {% if as_button %}
-<button type="button" class="btn btn-default navbar-btn"
-        onclick="javascript:document.location = '{% url 'test-data-list' mission=mission_id test_detail=test_detail_id %}'">
-    {% bootstrap_icon "file" %} {{ supporting_data_count| default:"0"}}
-</button>&nbsp;
+    <button type="button"
+            class="btn btn-default navbar-btn"
+            onclick="javascript:document.location = '{% url 'test-data-list' mission=mission_id test_detail=test_detail_id %}'">
+        {% bootstrap_icon "file" %} {{ supporting_data_count| default:"0" }}
+    </button>
+    &nbsp;
 {% else %}
-<a href="{% url 'test-data-list' mission=mission_id test_detail=test_detail_id %}">
-    {% bootstrap_icon "file" %}
-    {% if supporting_data_count > 0 %}
-        Manage Data ({{ supporting_data_count }})
-    {% else %}
-        Add Data
-    {% endif %}
+    <a href="{% url 'test-data-list' mission=mission_id test_detail=test_detail_id %}">
+        {% bootstrap_icon "file" %}
+        {% if supporting_data_count > 0 %}
+            Manage Data ({{ supporting_data_count }})
+        {% else %}
+            Add Data
+        {% endif %}
     </a>
 {% endif %}
-

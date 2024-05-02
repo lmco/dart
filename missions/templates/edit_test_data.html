@@ -27,28 +27,27 @@
 {% endblock %}
 {% block main_heading %}
     <h1 class="page-header">
-    {% if supportingdata.pk %}
-        Edit
-    {% else %}
-        Add
-    {% endif %}
-    Data for Test {{this_test.test_objective}}</h1>
+        {% if supportingdata.pk %}
+            Edit
+        {% else %}
+            Add
+        {% endif %}
+        Data for Test {{ this_test.test_objective }}
+    </h1>
     <p>
-        <a href="{% url 'test-data-list' mission=this_mission.id test_detail=this_test.id%}">&lt;&lt; Back to Data List</a>
+        <a href="{% url 'test-data-list' mission=this_mission.id test_detail=this_test.id %}">&lt;&lt; Back to Data List</a>
     </p>
 {% endblock %}
-
 {% block content %}
-<form action="{{ action }}" method="POST" enctype="multipart/form-data">
-{% csrf_token %}
-{% bootstrap_form form %}
-{% buttons %}
-    <button type="submit" class="btn btn-primary">
-        {% bootstrap_icon "star" %} Submit
-    </button>
-    {% if supportingdata.pk %}
-		<a class="btn btn-danger" href="{% url 'test-data-delete' mission=this_mission.id test_detail=this_test.id pk=supportingdata.pk %}">{% bootstrap_icon "trash" %} Delete</a>
-    {% endif %}
-{% endbuttons %}
+    <form action="{{ action }}" method="POST" enctype="multipart/form-data">
+        {% csrf_token %}
+        {% bootstrap_form form %}
+        {% buttons %}
+        <button type="submit" class="btn btn-primary">{% bootstrap_icon "star" %} Submit</button>
+        {% if supportingdata.pk %}
+            <a class="btn btn-danger"
+               href="{% url 'test-data-delete' mission=this_mission.id test_detail=this_test.id pk=supportingdata.pk %}">{% bootstrap_icon "trash" %} Delete</a>
+        {% endif %}
+    {% endbuttons %}
 </form>
 {% endblock %}

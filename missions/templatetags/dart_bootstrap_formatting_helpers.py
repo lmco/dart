@@ -28,13 +28,13 @@ def testCaseStatusToBootstrapClass(value, arg):
     """
 
     if not arg:
-        return 'info'
+        return "info"
     else:
         translations = {
-            'NEW': '',
-            'IN_WORK': 'danger',
-            'REVIEW': 'warning',
-            'FINAL': 'success',
+            "NEW": "",
+            "IN_WORK": "danger",
+            "REVIEW": "warning",
+            "FINAL": "success",
         }
 
         return translations[value]

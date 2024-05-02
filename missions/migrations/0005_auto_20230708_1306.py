@@ -23,365 +23,579 @@ import missions.models
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
-        ('missions', '0004_testdetail_supporting_data_sort_order'),
+        ("missions", "0004_testdetail_supporting_data_sort_order"),
     ]
 
     operations = [
         migrations.AlterField(
-            model_name='classificationlegend',
-            name='report_label_color_selection',
-            field=models.CharField(choices=[('T', 'Text Color'), ('B', 'Back Color')], default='B', max_length=1),
+            model_name="classificationlegend",
+            name="report_label_color_selection",
+            field=models.CharField(
+                choices=[("T", "Text Color"), ("B", "Back Color")],
+                default="B",
+                max_length=1,
+            ),
         ),
         migrations.AlterField(
-            model_name='classificationlegend',
-            name='short_legend',
-            field=models.CharField(default='', max_length=100),
+            model_name="classificationlegend",
+            name="short_legend",
+            field=models.CharField(default="", max_length=100),
         ),
         migrations.AlterField(
-            model_name='classificationlegend',
-            name='verbose_legend',
-            field=models.CharField(default='', max_length=200),
+            model_name="classificationlegend",
+            name="verbose_legend",
+            field=models.CharField(default="", max_length=200),
         ),
         migrations.AlterField(
-            model_name='color',
-            name='display_text',
-            field=models.CharField(default='', max_length=30),
+            model_name="color",
+            name="display_text",
+            field=models.CharField(default="", max_length=30),
         ),
         migrations.AlterField(
-            model_name='color',
-            name='hex_color_code',
-            field=models.CharField(default='', max_length=6),
+            model_name="color",
+            name="hex_color_code",
+            field=models.CharField(default="", max_length=6),
         ),
         migrations.AlterField(
-            model_name='dartdynamicsettings',
-            name='host_output_format',
-            field=models.CharField(default='{ip} ({name})', help_text='Use "{ip}" and "{name}" to specify how you want hosts to be displayed.', max_length=50, validators=[missions.extras.validators.validate_host_format_string]),
+            model_name="dartdynamicsettings",
+            name="host_output_format",
+            field=models.CharField(
+                default="{ip} ({name})",
+                help_text='Use "{ip}" and "{name}" to specify how you want hosts to be displayed.',
+                max_length=50,
+                validators=[missions.extras.validators.validate_host_format_string],
+            ),
         ),
         migrations.AlterField(
-            model_name='host',
-            name='host_name',
-            field=models.CharField(blank=True, default='', max_length=100),
+            model_name="host",
+            name="host_name",
+            field=models.CharField(blank=True, default="", max_length=100),
         ),
         migrations.AlterField(
-            model_name='mission',
-            name='assumptions_include_flag',
-            field=models.BooleanField(default=True, verbose_name='Mission Option: Include Assumptions in report?'),
+            model_name="mission",
+            name="assumptions_include_flag",
+            field=models.BooleanField(
+                default=True,
+                verbose_name="Mission Option: Include Assumptions in report?",
+            ),
         ),
         migrations.AlterField(
-            model_name='mission',
-            name='attack_phase_include_flag',
-            field=models.BooleanField(default=True, verbose_name='Mission Option: Include Attack Phases in report?'),
+            model_name="mission",
+            name="attack_phase_include_flag",
+            field=models.BooleanField(
+                default=True,
+                verbose_name="Mission Option: Include Attack Phases in report?",
+            ),
         ),
         migrations.AlterField(
-            model_name='mission',
-            name='attack_side_effects_include_flag',
-            field=models.BooleanField(default=True, verbose_name='Mission Option: Include Attack Side Effects in report?'),
+            model_name="mission",
+            name="attack_side_effects_include_flag",
+            field=models.BooleanField(
+                default=True,
+                verbose_name="Mission Option: Include Attack Side Effects in report?",
+            ),
         ),
         migrations.AlterField(
-            model_name='mission',
-            name='attack_time_date_include_flag',
-            field=models.BooleanField(default=True, verbose_name='Mission Option: Include Attack Times in report?'),
+            model_name="mission",
+            name="attack_time_date_include_flag",
+            field=models.BooleanField(
+                default=True,
+                verbose_name="Mission Option: Include Attack Times in report?",
+            ),
         ),
         migrations.AlterField(
-            model_name='mission',
-            name='attack_type_include_flag',
-            field=models.BooleanField(default=True, verbose_name='Mission Option: Include Attack Types in report?'),
+            model_name="mission",
+            name="attack_type_include_flag",
+            field=models.BooleanField(
+                default=True,
+                verbose_name="Mission Option: Include Attack Types in report?",
+            ),
         ),
         migrations.AlterField(
-            model_name='mission',
-            name='business_area',
-            field=models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='missions.businessarea', verbose_name='Business Area'),
+            model_name="mission",
+            name="business_area",
+            field=models.ForeignKey(
+                on_delete=django.db.models.deletion.CASCADE,
+                to="missions.businessarea",
+                verbose_name="Business Area",
+            ),
         ),
         migrations.AlterField(
-            model_name='mission',
-            name='command_syntax_include_flag',
-            field=models.BooleanField(default=True, verbose_name='Mission Option: Include Command Syntaxes in report?'),
+            model_name="mission",
+            name="command_syntax_include_flag",
+            field=models.BooleanField(
+                default=True,
+                verbose_name="Mission Option: Include Command Syntaxes in report?",
+            ),
         ),
         migrations.AlterField(
-            model_name='mission',
-            name='conclusion',
-            field=models.TextField(blank=True, default=missions.models.conclusion_default, verbose_name='Conclusion'),
+            model_name="mission",
+            name="conclusion",
+            field=models.TextField(
+                blank=True,
+                default=missions.models.conclusion_default,
+                verbose_name="Conclusion",
+            ),
         ),
         migrations.AlterField(
-            model_name='mission',
-            name='customer_notes_include_flag',
-            field=models.BooleanField(default=True, verbose_name='Mission Option: Include customer notes section in report?'),
+            model_name="mission",
+            name="customer_notes_include_flag",
+            field=models.BooleanField(
+                default=True,
+                verbose_name="Mission Option: Include customer notes section in report?",
+            ),
         ),
-        migrations.AlterField(
-            model_name='mission',
-            name='executive_summary',
-            field=models.TextField(blank=True, default=missions.models.executive_summary_default, verbose_name='Executive Summary'),
-        ),
-        migrations.AlterField(
-            model_name='mission',
-            name='findings_include_flag',
-            field=models.BooleanField(default=True, verbose_name='Mission Option: Include Findings in report?'),
-        ),
-        migrations.AlterField(
-            model_name='mission',
-            name='introduction',
-            field=models.TextField(blank=True, default=missions.models.introduction_default, verbose_name='Introduction'),
-        ),
-        migrations.AlterField(
-            model_name='mission',
-            name='mission_name',
-            field=models.CharField(max_length=255, verbose_name='Mission Name'),
-        ),
-        migrations.AlterField(
-            model_name='mission',
-            name='mission_number',
-            field=models.CharField(max_length=5, verbose_name='Mission Number'),
-        ),
-        migrations.AlterField(
-            model_name='mission',
-            name='mitigation_include_flag',
-            field=models.BooleanField(default=True, verbose_name='Mission Option: Include Mitigations in report?'),
-        ),
-        migrations.AlterField(
-            model_name='mission',
-            name='objectives',
-            field=models.TextField(blank=True, default=missions.models.objectives_default, verbose_name='Objectives'),
-        ),
-        migrations.AlterField(
-            model_name='mission',
-            name='scope',
-            field=models.TextField(blank=True, default=missions.models.scope_default, verbose_name='Scope'),
-        ),
-        migrations.AlterField(
-            model_name='mission',
-            name='sources_include_flag',
-            field=models.BooleanField(default=True, verbose_name='Mission Option: Include Attack Sources in report?'),
-        ),
-        migrations.AlterField(
-            model_name='mission',
-            name='supporting_data_include_flag',
-            field=models.BooleanField(default=True, verbose_name='Mission Option: Include Supporting Data Information in report?'),
-        ),
-        migrations.AlterField(
-            model_name='mission',
-            name='targets_include_flag',
-            field=models.BooleanField(default=True, verbose_name='Mission Option: Include Attack Targets in report?'),
-        ),
-        migrations.AlterField(
-            model_name='mission',
-            name='technical_assessment_overview',
-            field=models.TextField(blank=True, default=missions.models.technical_assessment_overview_default, verbose_name='Technical Assessment / Attack Architecture Overview'),
-        ),
-        migrations.AlterField(
-            model_name='mission',
-            name='test_case_identifier',
-            field=models.CharField(blank=True, default='', max_length=20, verbose_name='Test Case Identifier'),
-        ),
-        migrations.AlterField(
-            model_name='mission',
-            name='test_description_include_flag',
-            field=models.BooleanField(default=True, verbose_name='Mission Option: Include Test Descriptions in report?'),
-        ),
-        migrations.AlterField(
-            model_name='mission',
-            name='test_result_observation_include_flag',
-            field=models.BooleanField(default=True, verbose_name='Mission Option: Include Test Details in report?'),
-        ),
-        migrations.AlterField(
-            model_name='mission',
-            name='testdetail_sort_order',
-            field=models.TextField(blank=True, default='[]'),
-        ),
-        migrations.AlterField(
-            model_name='mission',
-            name='tools_used_include_flag',
-            field=models.BooleanField(default=True, verbose_name='Mission Option: Include Tools Used in report?'),
-        ),
-        migrations.AlterField(
-            model_name='supportingdata',
-            name='caption',
-            field=models.TextField(blank=True, verbose_name='Caption'),
+        migrations.AlterField(
+            model_name="mission",
+            name="executive_summary",
+            field=models.TextField(
+                blank=True,
+                default=missions.models.executive_summary_default,
+                verbose_name="Executive Summary",
+            ),
+        ),
+        migrations.AlterField(
+            model_name="mission",
+            name="findings_include_flag",
+            field=models.BooleanField(
+                default=True, verbose_name="Mission Option: Include Findings in report?"
+            ),
         ),
-        migrations.AlterField(
-            model_name='supportingdata',
-            name='include_flag',
-            field=models.BooleanField(default=True, verbose_name='Include attachment in report'),
-        ),
-        migrations.AlterField(
-            model_name='supportingdata',
-            name='test_detail',
-            field=models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='missions.testdetail', verbose_name='Test Details'),
-        ),
-        migrations.AlterField(
-            model_name='supportingdata',
-            name='test_file',
-            field=models.FileField(upload_to='', verbose_name='Supporting Data'),
-        ),
-        migrations.AlterField(
-            model_name='testdetail',
-            name='assumptions',
-            field=models.TextField(blank=True, help_text='Example: Attacker has a presence in xyz segment, etc.', verbose_name='Assumptions'),
-        ),
-        migrations.AlterField(
-            model_name='testdetail',
-            name='assumptions_include_flag',
-            field=models.BooleanField(default=True, verbose_name='Include Assumptions in report?'),
-        ),
-        migrations.AlterField(
-            model_name='testdetail',
-            name='attack_phase',
-            field=models.CharField(choices=[('RECON', 'Reconnaissance'), ('WEP', 'Weaponization'), ('DEL', 'Delivery'), ('EXP', 'Exploitation'), ('INS', 'Installation'), ('C2', 'Command & Control'), ('AOO', 'Actions on Objectives')], max_length=20, verbose_name='Attack Phase'),
-        ),
-        migrations.AlterField(
-            model_name='testdetail',
-            name='attack_phase_include_flag',
-            field=models.BooleanField(default=True, verbose_name='Include Attack Phase in report?'),
-        ),
-        migrations.AlterField(
-            model_name='testdetail',
-            name='attack_side_effects',
-            field=models.TextField(blank=True, help_text='List any observed side effects, if any. Example: Firewall X froze and subsequently crashed.', verbose_name='Attack Side Effects'),
-        ),
-        migrations.AlterField(
-            model_name='testdetail',
-            name='attack_side_effects_include_flag',
-            field=models.BooleanField(default=True, verbose_name='Include Attack Side Effects in report?'),
+        migrations.AlterField(
+            model_name="mission",
+            name="introduction",
+            field=models.TextField(
+                blank=True,
+                default=missions.models.introduction_default,
+                verbose_name="Introduction",
+            ),
         ),
         migrations.AlterField(
-            model_name='testdetail',
-            name='attack_time_date',
-            field=models.DateTimeField(blank=True, default=django.utils.timezone.now, help_text='Date/time attack was launched', verbose_name='Attack Date / Time'),
+            model_name="mission",
+            name="mission_name",
+            field=models.CharField(max_length=255, verbose_name="Mission Name"),
         ),
         migrations.AlterField(
-            model_name='testdetail',
-            name='attack_time_date_include_flag',
-            field=models.BooleanField(default=True, verbose_name='Include Attack Time in report?'),
+            model_name="mission",
+            name="mission_number",
+            field=models.CharField(max_length=5, verbose_name="Mission Number"),
         ),
         migrations.AlterField(
-            model_name='testdetail',
-            name='attack_type',
-            field=models.CharField(blank=True, help_text='Example: SYN flood, UDP flood, malformed packets, web, fuzz, etc.', max_length=255, verbose_name='Attack Type'),
+            model_name="mission",
+            name="mitigation_include_flag",
+            field=models.BooleanField(
+                default=True,
+                verbose_name="Mission Option: Include Mitigations in report?",
+            ),
         ),
         migrations.AlterField(
-            model_name='testdetail',
-            name='attack_type_include_flag',
-            field=models.BooleanField(default=True, verbose_name='Include Attack Type in report?'),
+            model_name="mission",
+            name="objectives",
+            field=models.TextField(
+                blank=True,
+                default=missions.models.objectives_default,
+                verbose_name="Objectives",
+            ),
         ),
         migrations.AlterField(
-            model_name='testdetail',
-            name='command_syntax',
-            field=models.TextField(blank=True, help_text='Include sample command/syntax used if possible. If a script was used/created, what commands will run it?', verbose_name='Command/Syntax'),
+            model_name="mission",
+            name="scope",
+            field=models.TextField(
+                blank=True, default=missions.models.scope_default, verbose_name="Scope"
+            ),
         ),
         migrations.AlterField(
-            model_name='testdetail',
-            name='command_syntax_include_flag',
-            field=models.BooleanField(default=True, verbose_name='Include Command Syntax in report?'),
+            model_name="mission",
+            name="sources_include_flag",
+            field=models.BooleanField(
+                default=True,
+                verbose_name="Mission Option: Include Attack Sources in report?",
+            ),
         ),
         migrations.AlterField(
-            model_name='testdetail',
-            name='enclave',
-            field=models.CharField(blank=True, max_length=100, verbose_name='Enclave Test Executed From'),
+            model_name="mission",
+            name="supporting_data_include_flag",
+            field=models.BooleanField(
+                default=True,
+                verbose_name="Mission Option: Include Supporting Data Information in report?",
+            ),
         ),
         migrations.AlterField(
-            model_name='testdetail',
-            name='execution_status',
-            field=models.CharField(choices=[('N', 'Not Run'), ('R', 'Run'), ('C', 'Cancelled'), ('NA', 'N/A')], default='N', help_text='Execution status of the test case.', max_length=2, verbose_name='Execution Status'),
+            model_name="mission",
+            name="targets_include_flag",
+            field=models.BooleanField(
+                default=True,
+                verbose_name="Mission Option: Include Attack Targets in report?",
+            ),
         ),
         migrations.AlterField(
-            model_name='testdetail',
-            name='findings',
-            field=models.TextField(blank=True, help_text='Document the specific finding related to this test or against the main test objectives if applicable', verbose_name='Findings'),
+            model_name="mission",
+            name="technical_assessment_overview",
+            field=models.TextField(
+                blank=True,
+                default=missions.models.technical_assessment_overview_default,
+                verbose_name="Technical Assessment / Attack Architecture Overview",
+            ),
         ),
         migrations.AlterField(
-            model_name='testdetail',
-            name='findings_include_flag',
-            field=models.BooleanField(default=True, verbose_name='Include Findings in report?'),
+            model_name="mission",
+            name="test_case_identifier",
+            field=models.CharField(
+                blank=True,
+                default="",
+                max_length=20,
+                verbose_name="Test Case Identifier",
+            ),
         ),
         migrations.AlterField(
-            model_name='testdetail',
-            name='mission',
-            field=models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='missions.mission', verbose_name='Mission'),
+            model_name="mission",
+            name="test_description_include_flag",
+            field=models.BooleanField(
+                default=True,
+                verbose_name="Mission Option: Include Test Descriptions in report?",
+            ),
         ),
         migrations.AlterField(
-            model_name='testdetail',
-            name='mitigation',
-            field=models.TextField(blank=True, help_text='Example: Configure xyz, implement xyz, etc.', verbose_name='Mitigation'),
+            model_name="mission",
+            name="test_result_observation_include_flag",
+            field=models.BooleanField(
+                default=True,
+                verbose_name="Mission Option: Include Test Details in report?",
+            ),
         ),
         migrations.AlterField(
-            model_name='testdetail',
-            name='mitigation_include_flag',
-            field=models.BooleanField(default=True, verbose_name='Include Mitigations in report?'),
-        ),
-        migrations.AlterField(
-            model_name='testdetail',
-            name='point_of_contact',
-            field=models.CharField(blank=True, default='', help_text='Individual working or most familiar with this test case.', max_length=20, verbose_name='POC'),
-        ),
-        migrations.AlterField(
-            model_name='testdetail',
-            name='re_eval_test_case_number',
-            field=models.CharField(blank=True, default='', help_text='Adds previous test case reference to description in report.', max_length=25, verbose_name='Re-Evaluate Test Case #'),
-        ),
-        migrations.AlterField(
-            model_name='testdetail',
-            name='sources_include_flag',
-            field=models.BooleanField(default=True, verbose_name='Include Attack Sources in report?'),
-        ),
-        migrations.AlterField(
-            model_name='testdetail',
-            name='supporting_data_sort_order',
-            field=models.TextField(blank=True, default='[]'),
-        ),
+            model_name="mission",
+            name="testdetail_sort_order",
+            field=models.TextField(blank=True, default="[]"),
+        ),
         migrations.AlterField(
-            model_name='testdetail',
-            name='targets_include_flag',
-            field=models.BooleanField(default=True, verbose_name='Include Attack Targets in report?'),
+            model_name="mission",
+            name="tools_used_include_flag",
+            field=models.BooleanField(
+                default=True,
+                verbose_name="Mission Option: Include Tools Used in report?",
+            ),
         ),
         migrations.AlterField(
-            model_name='testdetail',
-            name='test_case_include_flag',
-            field=models.BooleanField(default=True, verbose_name='Include Test Case in report?'),
+            model_name="supportingdata",
+            name="caption",
+            field=models.TextField(blank=True, verbose_name="Caption"),
         ),
-        migrations.AlterField(
-            model_name='testdetail',
-            name='test_case_status',
-            field=models.CharField(choices=[('NEW', 'Not started'), ('IN_WORK', 'In work'), ('REVIEW', 'Ready for review'), ('FINAL', 'Approved / Final')], default='NEW', max_length=100, verbose_name='Test Case Status'),
-        ),
-        migrations.AlterField(
-            model_name='testdetail',
-            name='test_description',
-            field=models.TextField(blank=True, help_text='Describe test case to be performed, what is the objective of this test case (Is it to deny, disrupt, penetrate, modify etc.)', verbose_name='Description'),
-        ),
-        migrations.AlterField(
-            model_name='testdetail',
-            name='test_description_include_flag',
-            field=models.BooleanField(default=True, verbose_name='Include Test Description in report?'),
-        ),
-        migrations.AlterField(
-            model_name='testdetail',
-            name='test_number',
-            field=models.IntegerField(default=0, verbose_name='Test Number'),
-        ),
-        migrations.AlterField(
-            model_name='testdetail',
-            name='test_objective',
-            field=models.CharField(help_text='Brief objective (ex.Port Scan against xyz)', max_length=255, verbose_name='Test Objective / Title'),
+        migrations.AlterField(
+            model_name="supportingdata",
+            name="include_flag",
+            field=models.BooleanField(
+                default=True, verbose_name="Include attachment in report"
+            ),
         ),
         migrations.AlterField(
-            model_name='testdetail',
-            name='test_result_observation',
-            field=models.TextField(blank=True, help_text='Example: An average of 8756 SYN-ACK/sec were received at the attack laptop over the 30 second attack period. Plots of traffic flows showed degradation of all flow performance during time 5s – 40s after which they recovered.', verbose_name='Test Result Details'),
+            model_name="supportingdata",
+            name="test_detail",
+            field=models.ForeignKey(
+                on_delete=django.db.models.deletion.CASCADE,
+                to="missions.testdetail",
+                verbose_name="Test Details",
+            ),
         ),
+        migrations.AlterField(
+            model_name="supportingdata",
+            name="test_file",
+            field=models.FileField(upload_to="", verbose_name="Supporting Data"),
+        ),
         migrations.AlterField(
-            model_name='testdetail',
-            name='test_result_observation_include_flag',
-            field=models.BooleanField(default=True, verbose_name='Include Test Result in report?'),
+            model_name="testdetail",
+            name="assumptions",
+            field=models.TextField(
+                blank=True,
+                help_text="Example: Attacker has a presence in xyz segment, etc.",
+                verbose_name="Assumptions",
+            ),
         ),
         migrations.AlterField(
-            model_name='testdetail',
-            name='tools_used',
-            field=models.TextField(blank=True, help_text='Example: Burp Suite, Wireshark, NMap, etc.', verbose_name='Tools Used'),
+            model_name="testdetail",
+            name="assumptions_include_flag",
+            field=models.BooleanField(
+                default=True, verbose_name="Include Assumptions in report?"
+            ),
         ),
         migrations.AlterField(
-            model_name='testdetail',
-            name='tools_used_include_flag',
-            field=models.BooleanField(default=True, verbose_name='Include Tools Used in report?'),
+            model_name="testdetail",
+            name="attack_phase",
+            field=models.CharField(
+                choices=[
+                    ("RECON", "Reconnaissance"),
+                    ("WEP", "Weaponization"),
+                    ("DEL", "Delivery"),
+                    ("EXP", "Exploitation"),
+                    ("INS", "Installation"),
+                    ("C2", "Command & Control"),
+                    ("AOO", "Actions on Objectives"),
+                ],
+                max_length=20,
+                verbose_name="Attack Phase",
+            ),
+        ),
+        migrations.AlterField(
+            model_name="testdetail",
+            name="attack_phase_include_flag",
+            field=models.BooleanField(
+                default=True, verbose_name="Include Attack Phase in report?"
+            ),
+        ),
+        migrations.AlterField(
+            model_name="testdetail",
+            name="attack_side_effects",
+            field=models.TextField(
+                blank=True,
+                help_text="List any observed side effects, if any. Example: Firewall X froze and subsequently crashed.",
+                verbose_name="Attack Side Effects",
+            ),
+        ),
+        migrations.AlterField(
+            model_name="testdetail",
+            name="attack_side_effects_include_flag",
+            field=models.BooleanField(
+                default=True, verbose_name="Include Attack Side Effects in report?"
+            ),
+        ),
+        migrations.AlterField(
+            model_name="testdetail",
+            name="attack_time_date",
+            field=models.DateTimeField(
+                blank=True,
+                default=django.utils.timezone.now,
+                help_text="Date/time attack was launched",
+                verbose_name="Attack Date / Time",
+            ),
+        ),
+        migrations.AlterField(
+            model_name="testdetail",
+            name="attack_time_date_include_flag",
+            field=models.BooleanField(
+                default=True, verbose_name="Include Attack Time in report?"
+            ),
+        ),
+        migrations.AlterField(
+            model_name="testdetail",
+            name="attack_type",
+            field=models.CharField(
+                blank=True,
+                help_text="Example: SYN flood, UDP flood, malformed packets, web, fuzz, etc.",
+                max_length=255,
+                verbose_name="Attack Type",
+            ),
+        ),
+        migrations.AlterField(
+            model_name="testdetail",
+            name="attack_type_include_flag",
+            field=models.BooleanField(
+                default=True, verbose_name="Include Attack Type in report?"
+            ),
+        ),
+        migrations.AlterField(
+            model_name="testdetail",
+            name="command_syntax",
+            field=models.TextField(
+                blank=True,
+                help_text="Include sample command/syntax used if possible. If a script was used/created, what commands will run it?",
+                verbose_name="Command/Syntax",
+            ),
+        ),
+        migrations.AlterField(
+            model_name="testdetail",
+            name="command_syntax_include_flag",
+            field=models.BooleanField(
+                default=True, verbose_name="Include Command Syntax in report?"
+            ),
+        ),
+        migrations.AlterField(
+            model_name="testdetail",
+            name="enclave",
+            field=models.CharField(
+                blank=True, max_length=100, verbose_name="Enclave Test Executed From"
+            ),
+        ),
+        migrations.AlterField(
+            model_name="testdetail",
+            name="execution_status",
+            field=models.CharField(
+                choices=[
+                    ("N", "Not Run"),
+                    ("R", "Run"),
+                    ("C", "Cancelled"),
+                    ("NA", "N/A"),
+                ],
+                default="N",
+                help_text="Execution status of the test case.",
+                max_length=2,
+                verbose_name="Execution Status",
+            ),
+        ),
+        migrations.AlterField(
+            model_name="testdetail",
+            name="findings",
+            field=models.TextField(
+                blank=True,
+                help_text="Document the specific finding related to this test or against the main test objectives if applicable",
+                verbose_name="Findings",
+            ),
+        ),
+        migrations.AlterField(
+            model_name="testdetail",
+            name="findings_include_flag",
+            field=models.BooleanField(
+                default=True, verbose_name="Include Findings in report?"
+            ),
+        ),
+        migrations.AlterField(
+            model_name="testdetail",
+            name="mission",
+            field=models.ForeignKey(
+                on_delete=django.db.models.deletion.CASCADE,
+                to="missions.mission",
+                verbose_name="Mission",
+            ),
+        ),
+        migrations.AlterField(
+            model_name="testdetail",
+            name="mitigation",
+            field=models.TextField(
+                blank=True,
+                help_text="Example: Configure xyz, implement xyz, etc.",
+                verbose_name="Mitigation",
+            ),
+        ),
+        migrations.AlterField(
+            model_name="testdetail",
+            name="mitigation_include_flag",
+            field=models.BooleanField(
+                default=True, verbose_name="Include Mitigations in report?"
+            ),
+        ),
+        migrations.AlterField(
+            model_name="testdetail",
+            name="point_of_contact",
+            field=models.CharField(
+                blank=True,
+                default="",
+                help_text="Individual working or most familiar with this test case.",
+                max_length=20,
+                verbose_name="POC",
+            ),
+        ),
+        migrations.AlterField(
+            model_name="testdetail",
+            name="re_eval_test_case_number",
+            field=models.CharField(
+                blank=True,
+                default="",
+                help_text="Adds previous test case reference to description in report.",
+                max_length=25,
+                verbose_name="Re-Evaluate Test Case #",
+            ),
+        ),
+        migrations.AlterField(
+            model_name="testdetail",
+            name="sources_include_flag",
+            field=models.BooleanField(
+                default=True, verbose_name="Include Attack Sources in report?"
+            ),
+        ),
+        migrations.AlterField(
+            model_name="testdetail",
+            name="supporting_data_sort_order",
+            field=models.TextField(blank=True, default="[]"),
+        ),
+        migrations.AlterField(
+            model_name="testdetail",
+            name="targets_include_flag",
+            field=models.BooleanField(
+                default=True, verbose_name="Include Attack Targets in report?"
+            ),
+        ),
+        migrations.AlterField(
+            model_name="testdetail",
+            name="test_case_include_flag",
+            field=models.BooleanField(
+                default=True, verbose_name="Include Test Case in report?"
+            ),
+        ),
+        migrations.AlterField(
+            model_name="testdetail",
+            name="test_case_status",
+            field=models.CharField(
+                choices=[
+                    ("NEW", "Not started"),
+                    ("IN_WORK", "In work"),
+                    ("REVIEW", "Ready for review"),
+                    ("FINAL", "Approved / Final"),
+                ],
+                default="NEW",
+                max_length=100,
+                verbose_name="Test Case Status",
+            ),
+        ),
+        migrations.AlterField(
+            model_name="testdetail",
+            name="test_description",
+            field=models.TextField(
+                blank=True,
+                help_text="Describe test case to be performed, what is the objective of this test case (Is it to deny, disrupt, penetrate, modify etc.)",
+                verbose_name="Description",
+            ),
+        ),
+        migrations.AlterField(
+            model_name="testdetail",
+            name="test_description_include_flag",
+            field=models.BooleanField(
+                default=True, verbose_name="Include Test Description in report?"
+            ),
+        ),
+        migrations.AlterField(
+            model_name="testdetail",
+            name="test_number",
+            field=models.IntegerField(default=0, verbose_name="Test Number"),
+        ),
+        migrations.AlterField(
+            model_name="testdetail",
+            name="test_objective",
+            field=models.CharField(
+                help_text="Brief objective (ex.Port Scan against xyz)",
+                max_length=255,
+                verbose_name="Test Objective / Title",
+            ),
+        ),
+        migrations.AlterField(
+            model_name="testdetail",
+            name="test_result_observation",
+            field=models.TextField(
+                blank=True,
+                help_text="Example: An average of 8756 SYN-ACK/sec were received at the attack laptop over the 30 second attack period. Plots of traffic flows showed degradation of all flow performance during time 5s – 40s after which they recovered.",
+                verbose_name="Test Result Details",
+            ),
+        ),
+        migrations.AlterField(
+            model_name="testdetail",
+            name="test_result_observation_include_flag",
+            field=models.BooleanField(
+                default=True, verbose_name="Include Test Result in report?"
+            ),
+        ),
+        migrations.AlterField(
+            model_name="testdetail",
+            name="tools_used",
+            field=models.TextField(
+                blank=True,
+                help_text="Example: Burp Suite, Wireshark, NMap, etc.",
+                verbose_name="Tools Used",
+            ),
+        ),
+        migrations.AlterField(
+            model_name="testdetail",
+            name="tools_used_include_flag",
+            field=models.BooleanField(
+                default=True, verbose_name="Include Tools Used in report?"
+            ),
         ),
     ]

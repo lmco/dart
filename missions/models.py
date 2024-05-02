@@ -34,27 +34,27 @@ Python 2 can't serialize unbound method functions, therefore these defaults are 
 
 
 def introduction_default():
-    return Mission.get_default_text('introduction.txt')
+    return Mission.get_default_text("introduction.txt")
 
 
 def executive_summary_default():
-    return Mission.get_default_text('executive_summary.txt')
+    return Mission.get_default_text("executive_summary.txt")
 
 
 def scope_default():
-    return Mission.get_default_text('scope.txt')
+    return Mission.get_default_text("scope.txt")
 
 
 def objectives_default():
-    return Mission.get_default_text('objectives.txt')
+    return Mission.get_default_text("objectives.txt")
 
 
 def technical_assessment_overview_default():
-    return Mission.get_default_text('technical_assessment.txt')
+    return Mission.get_default_text("technical_assessment.txt")
 
 
 def conclusion_default():
-    return Mission.get_default_text('conclusion.txt')
+    return Mission.get_default_text("conclusion.txt")
 
 
 """
@@ -63,11 +63,10 @@ Models
 
 
 class Mission(models.Model):
-
     @staticmethod
     def get_default_text(file_name):
-        TEMPALTE_DIR = os.path.join(settings.BASE_DIR, 'templates')
-        with open(os.path.join(TEMPALTE_DIR, file_name), 'r') as template:
+        TEMPALTE_DIR = os.path.join(settings.BASE_DIR, "templates")
+        with open(os.path.join(TEMPALTE_DIR, file_name), "r") as template:
             output = join_as_compacted_paragraphs(template.readlines())
             return output
 
@@ -91,7 +90,7 @@ class Mission(models.Model):
     )
 
     business_area = models.ForeignKey(
-        'BusinessArea',
+        "BusinessArea",
         verbose_name="Business Area",
         on_delete=models.CASCADE,
     )
@@ -103,33 +102,23 @@ class Mission(models.Model):
     )
 
     executive_summary = models.TextField(
-        blank=True,
-        verbose_name="Executive Summary",
-        default=executive_summary_default
+        blank=True, verbose_name="Executive Summary", default=executive_summary_default
     )
 
-    scope = models.TextField(
-        blank=True,
-        verbose_name="Scope",
-        default=scope_default
-    )
+    scope = models.TextField(blank=True, verbose_name="Scope", default=scope_default)
 
     objectives = models.TextField(
-        blank=True,
-        verbose_name="Objectives",
-        default=objectives_default
+        blank=True, verbose_name="Objectives", default=objectives_default
     )
 
     technical_assessment_overview = models.TextField(
         blank=True,
         verbose_name="Technical Assessment / Attack Architecture Overview",
-        default=technical_assessment_overview_default
+        default=technical_assessment_overview_default,
     )
 
     conclusion = models.TextField(
-        blank=True,
-        verbose_name="Conclusion",
-        default=conclusion_default
+        blank=True, verbose_name="Conclusion", default=conclusion_default
     )
 
     # Mission-wide reporting include flags
@@ -200,18 +189,15 @@ class Mission(models.Model):
 
     supporting_data_include_flag = models.BooleanField(
         default=True,
-        verbose_name="Mission Option: Include Supporting Data Information in report?"
+        verbose_name="Mission Option: Include Supporting Data Information in report?",
     )
 
     customer_notes_include_flag = models.BooleanField(
         default=True,
-        verbose_name="Mission Option: Include customer notes section in report?"
+        verbose_name="Mission Option: Include customer notes section in report?",
     )
 
-    testdetail_sort_order = models.TextField(
-        blank=True,
-        default="[]"
-    )
+    testdetail_sort_order = models.TextField(blank=True, default="[]")
 
     def __str__(self):
         return "%s (%s)" % (self.mission_name, self.mission_number)
@@ -240,14 +226,18 @@ class Host(models.Model):
 
     @staticmethod
     def get_host_output_format_string():
-        format_string = str(DARTDynamicSettings.objects.get_as_object().host_output_format)
+        format_string = str(
+            DARTDynamicSettings.objects.get_as_object().host_output_format
+        )
         return format_string
 
     def __str__(self):
-        format_string = cache.get('host_output_format_string')
+        format_string = cache.get("host_output_format_string")
         if format_string is None:
-            cache.set('host_output_format_string', Host.get_host_output_format_string(), 300)
-            format_string = cache.get('host_output_format_string')
+            cache.set(
+                "host_output_format_string", Host.get_host_output_format_string(), 300
+            )
+            format_string = cache.get("host_output_format_string")
         return format_string.format(name=self.host_name, ip=self.ip_address)
 
     def get_absolute_url(self):
@@ -255,37 +245,36 @@ class Host(models.Model):
 
 
 class TestDetail(models.Model):
-    mission = models.ForeignKey(Mission, verbose_name="Mission", on_delete=models.CASCADE,)
+    mission = models.ForeignKey(
+        Mission,
+        verbose_name="Mission",
+        on_delete=models.CASCADE,
+    )
 
     test_number = models.IntegerField(
-        blank=False,
-        verbose_name="Test Number",
-        default=0
+        blank=False, verbose_name="Test Number", default=0
     )
 
     test_case_include_flag = models.BooleanField(
-        default=True,
-        verbose_name="Include Test Case in report?"
+        default=True, verbose_name="Include Test Case in report?"
     )
 
     TEST_CASE_STATUSES = (
-        ('NEW', 'Not started'),
-        ('IN_WORK', 'In work'),
-        ('REVIEW', 'Ready for review'),
-        ('FINAL', 'Approved / Final'),
+        ("NEW", "Not started"),
+        ("IN_WORK", "In work"),
+        ("REVIEW", "Ready for review"),
+        ("FINAL", "Approved / Final"),
     )
 
     test_case_status = models.CharField(
         choices=TEST_CASE_STATUSES,
         max_length=100,
         verbose_name="Test Case Status",
-        default='NEW',
+        default="NEW",
     )
 
     enclave = models.CharField(
-        blank=True,
-        max_length=100,
-        verbose_name='Enclave Test Executed From'
+        blank=True, max_length=100, verbose_name="Enclave Test Executed From"
     )
 
     test_objective = models.CharField(
@@ -297,13 +286,13 @@ class TestDetail(models.Model):
 
     # Note: Attack Phases based on the Lockheed Martin Kill Chain(R)
     ATTACK_PHASES = (
-        ('RECON', 'Reconnaissance'),
-        ('WEP', 'Weaponization'),
-        ('DEL', 'Delivery'),
-        ('EXP', 'Exploitation'),
-        ('INS', 'Installation'),
-        ('C2', 'Command & Control'),
-        ('AOO', 'Actions on Objectives'),
+        ("RECON", "Reconnaissance"),
+        ("WEP", "Weaponization"),
+        ("DEL", "Delivery"),
+        ("EXP", "Exploitation"),
+        ("INS", "Installation"),
+        ("C2", "Command & Control"),
+        ("AOO", "Actions on Objectives"),
     )
 
     attack_phase = models.CharField(
@@ -332,7 +321,7 @@ class TestDetail(models.Model):
     assumptions = models.TextField(
         blank=True,
         verbose_name="Assumptions",
-        help_text="Example: Attacker has a presence in xyz segment, etc."
+        help_text="Example: Attacker has a presence in xyz segment, etc.",
     )
 
     assumptions_include_flag = models.BooleanField(
@@ -343,7 +332,7 @@ class TestDetail(models.Model):
     test_description = models.TextField(
         blank=True,
         verbose_name="Description",
-        help_text="Describe test case to be performed, what is the objective of this test case (Is it to deny, disrupt, penetrate, modify etc.)"
+        help_text="Describe test case to be performed, what is the objective of this test case (Is it to deny, disrupt, penetrate, modify etc.)",
     )
 
     test_description_include_flag = models.BooleanField(
@@ -352,8 +341,8 @@ class TestDetail(models.Model):
     )
 
     source_hosts = models.ManyToManyField(
-        'Host',
-        related_name='source_set',
+        "Host",
+        related_name="source_set",
     )
 
     sources_include_flag = models.BooleanField(
@@ -362,8 +351,8 @@ class TestDetail(models.Model):
     )
 
     target_hosts = models.ManyToManyField(
-        'Host',
-        related_name='target_set',
+        "Host",
+        related_name="target_set",
     )
 
     targets_include_flag = models.BooleanField(
@@ -375,7 +364,7 @@ class TestDetail(models.Model):
         blank=True,
         default=timezone.now,
         verbose_name="Attack Date / Time",
-        help_text="Date/time attack was launched"
+        help_text="Date/time attack was launched",
     )
 
     attack_time_date_include_flag = models.BooleanField(
@@ -386,7 +375,7 @@ class TestDetail(models.Model):
     tools_used = models.TextField(
         blank=True,
         verbose_name="Tools Used",
-        help_text="Example: Burp Suite, Wireshark, NMap, etc."
+        help_text="Example: Burp Suite, Wireshark, NMap, etc.",
     )
 
     tools_used_include_flag = models.BooleanField(
@@ -397,7 +386,7 @@ class TestDetail(models.Model):
     command_syntax = models.TextField(
         blank=True,
         verbose_name="Command/Syntax",
-        help_text="Include sample command/syntax used if possible. If a script was used/created, what commands will run it?"
+        help_text="Include sample command/syntax used if possible. If a script was used/created, what commands will run it?",
     )
 
     command_syntax_include_flag = models.BooleanField(
@@ -409,8 +398,8 @@ class TestDetail(models.Model):
         blank=True,
         verbose_name="Test Result Details",
         help_text="Example: An average of 8756 SYN-ACK/sec were received at the attack laptop over the 30 second attack "
-                  "period. Plots of traffic flows showed degradation of all flow performance during time 5s – 40s "
-                  "after which they recovered."
+        "period. Plots of traffic flows showed degradation of all flow performance during time 5s – 40s "
+        "after which they recovered.",
     )
 
     test_result_observation_include_flag = models.BooleanField(
@@ -421,7 +410,7 @@ class TestDetail(models.Model):
     attack_side_effects = models.TextField(
         blank=True,
         verbose_name="Attack Side Effects",
-        help_text="List any observed side effects, if any. Example: Firewall X froze and subsequently crashed."
+        help_text="List any observed side effects, if any. Example: Firewall X froze and subsequently crashed.",
     )
 
     attack_side_effects_include_flag = models.BooleanField(
@@ -430,18 +419,18 @@ class TestDetail(models.Model):
     )
 
     EXECUTION_STATUS_OPTIONS = (
-        ('N', 'Not Run'),
-        ('R', 'Run'),
-        ('C', 'Cancelled'),
-        ('NA', 'N/A'),
+        ("N", "Not Run"),
+        ("R", "Run"),
+        ("C", "Cancelled"),
+        ("NA", "N/A"),
     )
 
     execution_status = models.CharField(
         choices=EXECUTION_STATUS_OPTIONS,
         max_length=2,
         verbose_name="Execution Status",
-        default='N',
-        help_text="Execution status of the test case."
+        default="N",
+        help_text="Execution status of the test case.",
     )
 
     has_findings = models.BooleanField(
@@ -451,7 +440,7 @@ class TestDetail(models.Model):
     findings = models.TextField(
         blank=True,
         verbose_name="Findings",
-        help_text="Document the specific finding related to this test or against the main test objectives if applicable"
+        help_text="Document the specific finding related to this test or against the main test objectives if applicable",
     )
 
     findings_include_flag = models.BooleanField(
@@ -462,7 +451,7 @@ class TestDetail(models.Model):
     mitigation = models.TextField(
         blank=True,
         verbose_name="Mitigation",
-        help_text="Example: Configure xyz, implement xyz, etc."
+        help_text="Example: Configure xyz, implement xyz, etc.",
     )
 
     mitigation_include_flag = models.BooleanField(
@@ -475,7 +464,7 @@ class TestDetail(models.Model):
         blank=True,
         default="",
         verbose_name="POC",
-        help_text="Individual working or most familiar with this test case."
+        help_text="Individual working or most familiar with this test case.",
     )
 
     re_eval_test_case_number = models.CharField(
@@ -483,13 +472,10 @@ class TestDetail(models.Model):
         blank=True,
         default="",
         verbose_name="Re-Evaluate Test Case #",
-        help_text="Adds previous test case reference to description in report."
+        help_text="Adds previous test case reference to description in report.",
     )
 
-    supporting_data_sort_order = models.TextField(
-        blank=True,
-        default="[]"
-    )
+    supporting_data_sort_order = models.TextField(blank=True, default="[]")
 
     def count_of_supporting_data(self):
         return len(SupportingData.objects.filter(test_detail=self.pk))
@@ -503,7 +489,11 @@ class TestDetail(models.Model):
 
 
 class SupportingData(models.Model):
-    test_detail = models.ForeignKey(TestDetail, verbose_name="Test Details",on_delete=models.CASCADE,)
+    test_detail = models.ForeignKey(
+        TestDetail,
+        verbose_name="Test Details",
+        on_delete=models.CASCADE,
+    )
 
     caption = models.TextField(
         blank=True,
@@ -511,19 +501,16 @@ class SupportingData(models.Model):
     )
 
     include_flag = models.BooleanField(
-        default=True,
-        verbose_name="Include attachment in report"
+        default=True, verbose_name="Include attachment in report"
     )
 
-    test_file = models.FileField(
-        verbose_name="Supporting Data"
-    )
+    test_file = models.FileField(verbose_name="Supporting Data")
 
     def filename(self):
         return os.path.basename(self.test_file.name)
 
     def get_absolute_url(self):
-        return reverse_lazy('data-view', {'supportingdata': self.pk})
+        return reverse_lazy("data-view", {"supportingdata": self.pk})
 
 
 class BusinessArea(models.Model):
@@ -547,7 +534,7 @@ class Color(models.Model):
     )
 
     def __str__(self):
-        return '{0.display_text}'.format(self)
+        return "{0.display_text}".format(self)
 
 
 class ClassificationLegend(models.Model):
@@ -564,37 +551,37 @@ class ClassificationLegend(models.Model):
     )
 
     text_color = models.ForeignKey(
-        'Color',
-        related_name='classificationlegend_text_set',
+        "Color",
+        related_name="classificationlegend_text_set",
         on_delete=models.CASCADE,
     )
 
     background_color = models.ForeignKey(
-        'Color',
-        related_name='classificationlegend_background_set',
+        "Color",
+        related_name="classificationlegend_background_set",
         on_delete=models.CASCADE,
     )
 
     REPORT_LABEL_COLOR_OPTIONS = (
-        ('T', 'Text Color'),
-        ('B', 'Back Color'),
+        ("T", "Text Color"),
+        ("B", "Back Color"),
     )
 
     report_label_color_selection = models.CharField(
         choices=REPORT_LABEL_COLOR_OPTIONS,
         max_length=1,
-        default='B',
+        default="B",
         blank=False,
     )
 
     def get_report_label_color(self):
-        if self.report_label_color_selection == 'T':
+        if self.report_label_color_selection == "T":
             return self.text_color
         else:
             return self.background_color
 
     def __str__(self):
-        return '{0.verbose_legend} ({0.short_legend})'.format(self)
+        return "{0.verbose_legend} ({0.short_legend})".format(self)
 
 
 class DARTDynamicSettingsManager(models.Manager):
@@ -614,15 +601,15 @@ class DARTDynamicSettingsManager(models.Manager):
 
 class DARTDynamicSettings(models.Model):
     system_classification = models.ForeignKey(
-        'ClassificationLegend',
+        "ClassificationLegend",
         on_delete=models.CASCADE,
     )
 
     host_output_format = models.CharField(
         max_length=50,
-        default='{ip} ({name})',
+        default="{ip} ({name})",
         help_text='Use "{ip}" and "{name}" to specify how you want hosts to be displayed.',
-        validators=[validate_host_format_string]
+        validators=[validate_host_format_string],
     )
 
     # Since we're treating Dynamic Settings as a singleton,

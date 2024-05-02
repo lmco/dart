@@ -17,11 +17,7 @@
 -->
 {% endcomment %}
 {% load staticfiles %}
-
-<img class="preloader" src="{% static 'base/img/ajax-loader.gif' %}" alt="Loading..."
-     {% if align == "center" %}
-        style="margin-left: -8; padding-left: 50%;"
-     {% elif align == "right" %}
-        style="padding-left: 100%; margin-left: -16px;"
-     {% endif %}
-     />
+<img class="preloader"
+     src="{% static 'base/img/ajax-loader.gif' %}"
+     alt="Loading..."
+     {% if align == "center" %} style="margin-left: -8; padding-left: 50%;" {% elif align == "right" %} style="padding-left: 100%; margin-left: -16px;" {% endif %} />

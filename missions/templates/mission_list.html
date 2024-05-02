@@ -19,42 +19,48 @@
 {% endcomment %}
 {% load bootstrap3 %}
 {% block title %}Missions{% endblock %}
-
 {% block extra_nav_bar_content_right %}
-<li class="">
+    <li class="">
         <a href="{% url 'update-settings' %}">System Settings</a>
-</li>
+    </li>
 {% endblock %}
-
 {% block main_heading %}
-<h1 class="page-header">Mission List <div style="float:right"><a href="{% url 'missions-new' %}" class="btn btn-primary">{% bootstrap_icon "plus" %} Add New</a></div></h1>
+    <h1 class="page-header">
+        Mission List
+        <div style="float:right">
+            <a href="{% url 'missions-new' %}" class="btn btn-primary">{% bootstrap_icon "plus" %} Add New</a>
+        </div>
+    </h1>
 {% endblock %}
 {% block content %}
-
-<div class="clearfix">&nbsp;</div>
-<table class="table table-hover table-bordered table-striped table-responsive">
-    <tr>
-        <th> </th>
-        <th>Mission Name</th>
-        <th>Mission #</th>
-        <th>Business Area</th>
-        <th>Actions</th>
-    </tr>
-
-    {% for m in missions %}
+    <div class="clearfix">&nbsp;</div>
+    <table class="table table-hover table-bordered table-striped table-responsive">
         <tr>
-            <td><a href="{% url 'missions-edit' pk=m.id %}">{% bootstrap_icon "edit" %} Edit</a></td>
-            <td>{{ m.mission_name }}</td>
-            <td>{{ m.mission_number }}</td>
-            <td>{{ m.business_area }}</td>
-            <td>
-                <a href="{% url 'mission-tests' mission=m.id %}">{% bootstrap_icon "stats" %} Test Cases</a><br />
-                <a href="{% url 'mission-hosts' mission_id=m.id %}">{% bootstrap_icon "hdd" %} Mission Hosts</a><br />
-                <a href="{% url 'mission-report' mission=m.id %}">{% bootstrap_icon "file" %} Generate Report</a><br />
-                <a href="{% url 'mission-attachments' mission=m.id %}">{% bootstrap_icon "gift" %} Generate Data Package</a>
-            </td>
+            <th></th>
+            <th>Mission Name</th>
+            <th>Mission #</th>
+            <th>Business Area</th>
+            <th>Actions</th>
         </tr>
-    {% endfor %}
-</table>
+        {% for m in missions %}
+            <tr>
+                <td>
+                    <a href="{% url 'missions-edit' pk=m.id %}">{% bootstrap_icon "edit" %} Edit</a>
+                </td>
+                <td>{{ m.mission_name }}</td>
+                <td>{{ m.mission_number }}</td>
+                <td>{{ m.business_area }}</td>
+                <td>
+                    <a href="{% url 'mission-tests' mission=m.id %}">{% bootstrap_icon "stats" %} Test Cases</a>
+                    <br />
+                    <a href="{% url 'mission-hosts' mission_id=m.id %}">{% bootstrap_icon "hdd" %} Mission Hosts</a>
+                    <br />
+                    <a href="{% url 'mission-report' mission=m.id %}">{% bootstrap_icon "file" %} Generate Report</a>
+                    <br />
+                    <a href="{% url 'mission-attachments' mission=m.id %}">{% bootstrap_icon "gift" %} Generate Data Package</a>
+                </td>
+            </tr>
+        {% endfor %}
+    </table>
     {% bootstrap_pagination missions size="medium" %}
 {% endblock %}

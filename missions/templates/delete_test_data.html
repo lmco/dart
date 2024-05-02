@@ -18,36 +18,23 @@
 -->
 {% endcomment %}
 {% load bootstrap3 %}
-{% block title %}
-     Confirm Supporting Data Deletion
-{% endblock %}
-
-{% block main_heading %}
-<h1 class="page-header">
-    Confirm Supporting Data Deletion
-</h1>
-{% endblock %}
-
+{% block title %}Confirm Supporting Data Deletion{% endblock %}
+{% block main_heading %}<h1 class="page-header">Confirm Supporting Data Deletion</h1>{% endblock %}
 {% block content %}
-<p>Are you sure you want to permanently delete this supporting data and all the hard work you put into it?
-</p>
-
-<div class="alert alert-danger" role="alert">
-	<p>
-		<strong>Danger!</strong> 
-		This will remove the supporting data from DART entirely (the copy of the file that DART stores included).
-		If you need the supporting data, make sure you still have the original or go back and download it first, then delete.
-	</p>
-</div>
-
-<form method="POST">
-{% csrf_token %}
-
-{% buttons %}
-    <a class="btn btn-primary" href="{% url 'test-data-edit' mission=mission_id test_detail=test_id pk=supportingdata.id %}">I've made a horrible mistake! Take me back!</a>
-    <button type="submit" class="btn btn-danger pull-right">
-        {% bootstrap_icon "trash" %} Delete Forever
-    </button>
-{% endbuttons %}
+    <p>Are you sure you want to permanently delete this supporting data and all the hard work you put into it?</p>
+    <div class="alert alert-danger" role="alert">
+        <p>
+            <strong>Danger!</strong>
+            This will remove the supporting data from DART entirely (the copy of the file that DART stores included).
+            If you need the supporting data, make sure you still have the original or go back and download it first, then delete.
+        </p>
+    </div>
+    <form method="POST">
+        {% csrf_token %}
+        {% buttons %}
+        <a class="btn btn-primary"
+           href="{% url 'test-data-edit' mission=mission_id test_detail=test_id pk=supportingdata.id %}">I've made a horrible mistake! Take me back!</a>
+        <button type="submit" class="btn btn-danger pull-right">{% bootstrap_icon "trash" %} Delete Forever</button>
+    {% endbuttons %}
 </form>
 {% endblock %}

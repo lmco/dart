@@ -20,9 +20,11 @@ from django.utils.translation import ugettext_lazy as _
 
 
 def validate_host_format_string(value):
-    regex_match = re.match(r'^((?:{name}|{ip}|-| |\(|\)|[a-zA-Z:]))+$', value)
+    regex_match = re.match(r"^((?:{name}|{ip}|-| |\(|\)|[a-zA-Z:]))+$", value)
     if not regex_match:
         raise ValidationError(
-            _('%(value)s includes invalid characters or tokens ({name}, {ip}, A-Z, a-z, :, (, and ) allowed.'),
-            params={'value': value},
+            _(
+                "%(value)s includes invalid characters or tokens ({name}, {ip}, A-Z, a-z, :, (, and ) allowed."
+            ),
+            params={"value": value},
         )

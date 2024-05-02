@@ -27,36 +27,35 @@ import os
 import subprocess
 import sys
 
-MANAGER = os.path.join(os. getcwd(), "manage.py")
+MANAGER = os.path.join(os.getcwd(), "manage.py")
 
 PYTHON_INTERPRETER = sys.executable
 
-print('\n\nDART First Run Script\nCreated by the Lockheed Martin Red Team')
+print("\n\nDART First Run Script\nCreated by the Lockheed Martin Red Team")
 
 input("\n\nPress Enter to continue...")
 
-print('\nEnsuring all migrations are made...')
+print("\nEnsuring all migrations are made...")
 subprocess.call([PYTHON_INTERPRETER, MANAGER, "makemigrations"])
 
-print('\nExecuting migrations...')
+print("\nExecuting migrations...")
 subprocess.call([PYTHON_INTERPRETER, MANAGER, "migrate"])
 
-print('\nSeeding the database...\nIf this is not the first time running this script. This step will reset to the default colors, classifications, or BAs from the initial data load. New entries will not be affected.')
+print(
+    "\nSeeding the database...\nIf this is not the first time running this script. This step will reset to the default colors, classifications, or BAs from the initial data load. New entries will not be affected."
+)
 seed_data = input("\nDo you want to seed the database? [y/N]")
 
-if len(seed_data) and seed_data.strip().upper()[0] == 'Y':
-    print('\nRunning Fixture: common_classifications')
-    subprocess.call([PYTHON_INTERPRETER, MANAGER, "loaddata",
-                    "common_classifications"])
+if len(seed_data) and seed_data.strip().upper()[0] == "Y":
+    print("\nRunning Fixture: common_classifications")
+    subprocess.call([PYTHON_INTERPRETER, MANAGER, "loaddata", "common_classifications"])
 
-    print('\nRunning Fixture: common_bas')
-    subprocess.call([PYTHON_INTERPRETER, MANAGER,
-                    "loaddata", "common_bas"])
+    print("\nRunning Fixture: common_bas")
+    subprocess.call([PYTHON_INTERPRETER, MANAGER, "loaddata", "common_bas"])
 
 add_user = input("\nDo you want add a super user? [y/N]")
-while len(add_user) and add_user.strip().upper()[0] == 'Y':
-    subprocess.call([PYTHON_INTERPRETER, MANAGER,
-                    "createsuperuser"])
+while len(add_user) and add_user.strip().upper()[0] == "Y":
+    subprocess.call([PYTHON_INTERPRETER, MANAGER, "createsuperuser"])
 
     add_user = input("\nDo you want add a user? [y/N]")
 

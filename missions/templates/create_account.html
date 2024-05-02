@@ -19,54 +19,60 @@
 {% endcomment %}
 {% load bootstrap3 %}
 {% load static %}
-
-{% block title %}
-    Account Creation
-{% endblock %}
-
+{% block title %}Account Creation{% endblock %}
 {% block main_heading %}
-<h1 class="page-header">
-    {% if any_accounts_configured %}
-    Account Help
-    {% else %}
-    Account Creation
-    {% endif %}
-</h1>
+    <h1 class="page-header">
+        {% if any_accounts_configured %}
+            Account Help
+        {% else %}
+            Account Creation
+        {% endif %}
+    </h1>
 {% endblock %}
-
 {% block content %}
-{% if any_accounts_configured %}
-    <div class="panel panel-primary">
-        <div class="panel-heading">Forgotten Credentials Assistance</div>
-        <div class="panel-body">
-            <p>If you have forgotten your credentials you will be unable to access the web page until you have
-            removed all user accounts (which will allow you to create a new user using this page).
-            Don't fret, your mission data will be preserved.</p>
-            <h3>Removing All User Accounts</h3>
-            <ol>
-                <li>Execute the following command from the DART directory:<br>
-                    <code>python manage.py removeallusers</code>
-                </li>
-            </ol>
+    {% if any_accounts_configured %}
+        <div class="panel panel-primary">
+            <div class="panel-heading">Forgotten Credentials Assistance</div>
+            <div class="panel-body">
+                <p>
+                    If you have forgotten your credentials you will be unable to access the web page until you have
+                    removed all user accounts (which will allow you to create a new user using this page).
+                    Don't fret, your mission data will be preserved.
+                </p>
+                <h3>Removing All User Accounts</h3>
+                <ol>
+                    <li>
+                        Execute the following command from the DART directory:
+                        <br>
+                        <code>python manage.py removeallusers</code>
+                    </li>
+                </ol>
+            </div>
         </div>
-
-
-    </div>
-{% else %}
+    {% else %}
         <div class="panel panel-primary">
             <div class="panel-heading">Create an Account</div>
             <div class="panel-body">
                 <p>It looks like you're the first user here, go ahead and enter some credentials to get started!</p>
                 <form method="POST">
                     {% csrf_token %}
-                    <input type="text" id="username" name="username" class="form-control" placeholder="Username"
-                           required="" autofocus="">
-                    <input type="password" id="password" name="password" class="form-control" placeholder="Password"
+                    <input type="text"
+                           id="username"
+                           name="username"
+                           class="form-control"
+                           placeholder="Username"
+                           required=""
+                           autofocus="">
+                    <input type="password"
+                           id="password"
+                           name="password"
+                           class="form-control"
+                           placeholder="Password"
                            required="">
                     <br />
                     <button class="btn btn-lg btn-primary btn-block" type="submit">Create Account</button>
                 </form>
             </div>
         </div>
-{% endif %}
+    {% endif %}
 {% endblock %}

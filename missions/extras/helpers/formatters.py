@@ -33,6 +33,8 @@ def join_as_compacted_paragraphs(paragraphs):
     :return: String with \n separated paragraphs and no extra whitespace
     """
 
-    paragraphs[:] = [' '.join(p.split()) for p in paragraphs]  # Remove extra whitespace & newlines
+    paragraphs[:] = [
+        " ".join(p.split()) for p in paragraphs
+    ]  # Remove extra whitespace & newlines
 
-    return '\n'.join(paragraphs)
+    return "\n".join(paragraphs)

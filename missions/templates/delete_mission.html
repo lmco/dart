@@ -18,26 +18,15 @@
 -->
 {% endcomment %}
 {% load bootstrap3 %}
-{% block title %}
-     Confirm Mission Deletion
-{% endblock %}
-
-{% block main_heading %}
-<h1 class="page-header">
-    Confirm Mission Deletion
-</h1>
-{% endblock %}
-
+{% block title %}Confirm Mission Deletion{% endblock %}
+{% block main_heading %}<h1 class="page-header">Confirm Mission Deletion</h1>{% endblock %}
 {% block content %}
-<p>Are you sure you want to permanently delete this mission and all the hard work you put into it?</p>
-<form method="POST">
-{% csrf_token %}
-
-{% buttons %}
-    <a class="btn btn-primary" href="{% url 'missions-edit' mission.id%}">I've made a horrible mistake! Take me back!</a>
-    <button type="submit" class="btn btn-danger pull-right">
-        {% bootstrap_icon "trash" %} Delete Forever
-    </button>
-{% endbuttons %}
+    <p>Are you sure you want to permanently delete this mission and all the hard work you put into it?</p>
+    <form method="POST">
+        {% csrf_token %}
+        {% buttons %}
+        <a class="btn btn-primary" href="{% url 'missions-edit' mission.id %}">I've made a horrible mistake! Take me back!</a>
+        <button type="submit" class="btn btn-danger pull-right">{% bootstrap_icon "trash" %} Delete Forever</button>
+    {% endbuttons %}
 </form>
 {% endblock %}

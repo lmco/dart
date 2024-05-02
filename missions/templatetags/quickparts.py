@@ -20,34 +20,36 @@ from missions.models import DARTDynamicSettings
 register = template.Library()
 
 
-@register.inclusion_tag('tags_managedata.html')
+@register.inclusion_tag("tags_managedata.html")
 def manage_data_button(mission_id, testcase_id, number_of_attachments, as_button=False):
-    """ Returns the text that should be displayed regarding attachments to a test case. """
+    """Returns the text that should be displayed regarding attachments to a test case."""
     return {
-        'mission_id': mission_id,
-        'test_detail_id': testcase_id,
-        'supporting_data_count': number_of_attachments,
-        'as_button': as_button
+        "mission_id": mission_id,
+        "test_detail_id": testcase_id,
+        "supporting_data_count": number_of_attachments,
+        "as_button": as_button,
     }
 
-@register.inclusion_tag('tags_preloader_partial.html')
+
+@register.inclusion_tag("tags_preloader_partial.html")
 def preloader(align="center"):
     """
     Returns a quick preloader html snippet.
     :param align: string equal to "left", "center" (default), or "right"
     """
     return {
-        'align': align,
+        "align": align,
     }
 
-@register.inclusion_tag('tags_classification_legend_partial.html')
+
+@register.inclusion_tag("tags_classification_legend_partial.html")
 def legend_partial(location):
-    """ Returns the top and bottom legend divs. """
+    """Returns the top and bottom legend divs."""
 
     dynamic_settings_qryset = DARTDynamicSettings.objects.select_related(
-        'system_classification',
-        'system_classification__text_color',
-        'system_classification__background_color',
+        "system_classification",
+        "system_classification__text_color",
+        "system_classification__background_color",
     ).all()
 
     dynamic_settings = dynamic_settings_qryset.first()
@@ -55,8 +57,8 @@ def legend_partial(location):
     legend = dynamic_settings.system_classification
 
     return {
-        'location': location,
-        'classification_text_color': legend.text_color.hex_color_code,
-        'classification_background_color': legend.background_color.hex_color_code,
-        'classification_text': legend.verbose_legend,
+        "location": location,
+        "classification_text_color": legend.text_color.hex_color_code,
+        "classification_background_color": legend.background_color.hex_color_code,
+        "classification_text": legend.verbose_legend,
     }

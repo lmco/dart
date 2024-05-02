@@ -13,18 +13,19 @@
 # limitations under the License.
 #
 
-from django.core.management.base import BaseCommand, CommandError
+from django.core.management.base import BaseCommand
 from django.contrib.auth import get_user_model
 
 
 class Command(BaseCommand):
-    help = 'removes all users in the system, but leaves the data intact'
+    help = "removes all users in the system, but leaves the data intact"
 
     def handle(self, *args, **options):
-
         User = get_user_model()
         users = User.objects.all()
         users.delete()
 
-        self.stdout.write('Successfully deleted all users. You should now be able to create a new user account via the '
-                          'web interface.')
+        self.stdout.write(
+            "Successfully deleted all users. You should now be able to create a new user account via the "
+            "web interface."
+        )

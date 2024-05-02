@@ -22,24 +22,15 @@
         <meta http-equiv="refresh" content="0;URL='{% url 'missions-list' %}'" />
     {% endif %}
 {% endblock %}
-
-{% block title %}
-Login
-{% endblock %}
-
-{% block main_heading %}
-<h1 class="page-header">
-    Welcome to DART
-</h1>
-{% endblock %}
-
+{% block title %}Login{% endblock %}
+{% block main_heading %}<h1 class="page-header">Welcome to DART</h1>{% endblock %}
 {% block content %}
-<p>Login above to continue.</p>
-<p>If you are having trouble logging in or need to create your initial system account, please
-  <a href="{% url 'create-account' %}">click here</a>.
-</p>
-
-<script type="text/javascript">
-document.getElementById('id_username').focus()
-</script>
+    <p>Login above to continue.</p>
+    <p>
+        If you are having trouble logging in or need to create your initial system account, please
+        <a href="{% url 'create-account' %}">click here</a>.
+    </p>
+    <script type="text/javascript">
+        document.getElementById('id_username').focus()
+    </script>
 {% endblock %}

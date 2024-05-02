@@ -23,18 +23,21 @@ logger = logging.getLogger(__name__)
 
 
 class MissionAnalytics(object):
-
     def __init__(self, mission_id):
         self.mission_id = mission_id
 
         # All analytics exclude hidden test cases so we don't report
         # numbers of tests greater than what the customer ultimately sees
-        self.testcases = TestDetail.objects.filter(mission=self.mission_id).exclude(test_case_include_flag=False)
+        self.testcases = TestDetail.objects.filter(mission=self.mission_id).exclude(
+            test_case_include_flag=False
+        )
 
-        self.test_case_types_by_mission_week = self._count_of_test_case_types_by_mission_week()
+        self.test_case_types_by_mission_week = (
+            self._count_of_test_case_types_by_mission_week()
+        )
 
     def count_of_findings(self):
-        count = self.testcases.exclude(findings='').count()
+        count = self.testcases.exclude(findings="").count()
         return count
 
     def count_of_test_cases(self):
@@ -42,30 +45,32 @@ class MissionAnalytics(object):
         return count
 
     def count_of_executed_test_cases(self):
-        count = self.testcases.exclude(execution_status='N').count()
+        count = self.testcases.exclude(execution_status="N").count()
         return count
 
     def count_of_test_cases_approved(self):
-        count = self.testcases.filter(test_case_status='FINAL').count()
+        count = self.testcases.filter(test_case_status="FINAL").count()
         return count
 
     def mission_execution_percentage(self):
-
         if self.count_of_test_cases() == 0:
             # prevent division by 0
             percentage = 0
         else:
-            percentage = self.count_of_executed_test_cases() / self.count_of_test_cases()
-        return '{:.0%}'.format(percentage)
+            percentage = (
+                self.count_of_executed_test_cases() / self.count_of_test_cases()
+            )
+        return "{:.0%}".format(percentage)
 
     def mission_completion_percentage(self):
-
         if self.count_of_test_cases() == 0:
             # prevent division by 0
             percentage = 0
         else:
-            percentage = self.count_of_test_cases_approved() / self.count_of_test_cases()
-        return '{:.0%}'.format(percentage)
+            percentage = (
+                self.count_of_test_cases_approved() / self.count_of_test_cases()
+            )
+        return "{:.0%}".format(percentage)
 
     def count_of_test_cases_by_result(self):
         """
@@ -86,8 +91,8 @@ class MissionAnalytics(object):
         for result in TestDetail.EXECUTION_STATUS_OPTIONS:
             nested_tuple_to_shallow_list(result)
 
-        for tc_result in self.testcases.values('execution_status'):
-            index = output_list[0].index(tc_result['execution_status'])
+        for tc_result in self.testcases.values("execution_status"):
+            index = output_list[0].index(tc_result["execution_status"])
             output_list[2][index] += 1
 
         return output_list[1:]  # No need to return the lookup values list
@@ -102,12 +107,16 @@ class MissionAnalytics(object):
             return [0]
 
         # Get the execution date for each test case in the mission
-        tc_dates = self.testcases.exclude(execution_status='N').values('attack_time_date')
+        tc_dates = self.testcases.exclude(execution_status="N").values(
+            "attack_time_date"
+        )
 
         # Create a hashmap of the count of TCs per iso calendar week
         weekly_count = Counter()
         for tc_date in tc_dates:
-            isocalendar_week = tc_date['attack_time_date'].isocalendar()[1]  # Grab the isocalendar Week #
+            isocalendar_week = tc_date["attack_time_date"].isocalendar()[
+                1
+            ]  # Grab the isocalendar Week #
             weekly_count[isocalendar_week] += 1
 
         # Get the lowest & highest key values - these are week 1 and the last week respectively
@@ -134,17 +143,21 @@ class MissionAnalytics(object):
         """
 
         if self.count_of_executed_test_cases() == 0:
-            return [['No TCs have been executed yet!']]
+            return [["No TCs have been executed yet!"]]
 
         # Get the execution date & type for each executed test case in the mission
-        tc_records = self.testcases.exclude(execution_status='N').values('attack_time_date', 'attack_phase')
+        tc_records = self.testcases.exclude(execution_status="N").values(
+            "attack_time_date", "attack_phase"
+        )
 
         # Create a hashmap of the count of TCs per iso calendar week
         weekly_count = defaultdict(Counter)
 
         for tc_record in tc_records:
-            isocalendar_week = tc_record['attack_time_date'].isocalendar()[1]  # Grab the isocalendar Week #
-            attack_phase = tc_record['attack_phase']
+            isocalendar_week = tc_record["attack_time_date"].isocalendar()[
+                1
+            ]  # Grab the isocalendar Week #
+            attack_phase = tc_record["attack_phase"]
             weekly_count[isocalendar_week][attack_phase] += 1
 
         # Get the lowest & highest key values - these are week 1 and the last week respectively
@@ -157,11 +170,11 @@ class MissionAnalytics(object):
         zero_indexed_phase_count_by_week = []
 
         header_row = list()
-        header_row.append('')
+        header_row.append("")
         header_row.extend(list(range(1, week_delta)))
 
         total_row = list()
-        total_row.append('TOTAL')
+        total_row.append("TOTAL")
         total_row.extend([0] * week_delta)
 
         for phase_tuple in TestDetail.ATTACK_PHASES:

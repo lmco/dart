@@ -17,15 +17,13 @@
 -->
 {% endcomment %}
 {% if location == 'top' %}
-<div class="classification-legend-{{ location }}"
-     style="background: #{{ classification_background_color }}; color: #{{ classification_text_color }};">
-    {{ classification_text }}
-</div>
-<div class="lm-prop-legend-{{ location }}">Documentation and Reporting Tool (DART)</div>
+    <div class="classification-legend-{{ location }}"
+         style="background: #{{ classification_background_color }};
+                color: #{{ classification_text_color }}">{{ classification_text }}</div>
+    <div class="lm-prop-legend-{{ location }}">Documentation and Reporting Tool (DART)</div>
 {% elif location == 'bottom' %}
-<div class="lm-prop-legend-{{ location }}">Documentation and Reporting Tool (DART)</div>
-<div class="classification-legend-{{ location }}"
-     style="background: #{{ classification_background_color }}; color: #{{ classification_text_color }};">
-    {{ classification_text }}
-</div>
+    <div class="lm-prop-legend-{{ location }}">Documentation and Reporting Tool (DART)</div>
+    <div class="classification-legend-{{ location }}"
+         style="background: #{{ classification_background_color }};
+                color: #{{ classification_text_color }}">{{ classification_text }}</div>
 {% endif %}

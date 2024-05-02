@@ -20,35 +20,29 @@
     <ul class="list-group">
         <li class="list-group-item">
             Total Test Cases in Report
-            <span class="badge">{{analytics.count_of_test_cases}}</span>
+            <span class="badge">{{ analytics.count_of_test_cases }}</span>
         </li>
-        <li class="list-group-item"
-            title="Test Result != Not Run">
+        <li class="list-group-item" title="Test Result != Not Run">
             Test Cases Run or Cancelled
-            <span class="badge">{{analytics.count_of_executed_test_cases}}</span>
+            <span class="badge">{{ analytics.count_of_executed_test_cases }}</span>
         </li>
-        <li class="list-group-item"
-            title="TCs Run or Cancelled / Total TCs">
+        <li class="list-group-item" title="TCs Run or Cancelled / Total TCs">
             Mission Execution Completion
-            <span class="badge">{{analytics.mission_execution_percentage}}</span>
+            <span class="badge">{{ analytics.mission_execution_percentage }}</span>
         </li>
-        <li class="list-group-item"
-            title="Status == Final">
+        <li class="list-group-item" title="Status == Final">
             Test Cases Approved / Final
-            <span class="badge">{{analytics.count_of_test_cases_approved}}</span>
+            <span class="badge">{{ analytics.count_of_test_cases_approved }}</span>
         </li>
-        <li class="list-group-item"
-            title="TCs in Review or Final / Total TCs">
+        <li class="list-group-item" title="TCs in Review or Final / Total TCs">
             Overall Mission Completion
-            <span class="badge">{{analytics.mission_completion_percentage}}</span>
+            <span class="badge">{{ analytics.mission_completion_percentage }}</span>
         </li>
-        <li class="list-group-item"
-            title="TCs with content in Findings">
+        <li class="list-group-item" title="TCs with content in Findings">
             Test Cases w/Findings
-            <span class="badge">{{analytics.count_of_findings}}</span>
+            <span class="badge">{{ analytics.count_of_findings }}</span>
         </li>
-        <li class="list-group-item"
-            title="Aggregate Test Case Results">
+        <li class="list-group-item" title="Aggregate Test Case Results">
             Test Case Results
             <table class="table  table-responsive center">
                 <thead>
@@ -61,9 +55,7 @@
                 <tbody>
                     {% for row in analytics.count_of_test_cases_by_result|slice:"1:" %}
                         <tr>
-                            {% for col in row %}
-                                <td style="text-align: center;">{{ col }}</td>
-                            {% endfor %}
+                            {% for col in row %}<td style="text-align: center;">{{ col }}</td>{% endfor %}
                         </tr>
                     {% endfor %}
                 </tbody>
@@ -73,32 +65,29 @@
             title="Based on Attack Date and a Mon-Sun week. Only counts test cases with a final test result other than 'Not Run'">
             Test Cases Executed Per Mission Week
             {% if analytics.count_of_executed_test_cases == 0 %}
-            <span class="badge">{{ analytics.count_of_test_case_types_by_mission_week|first|first }}</span>
+                <span class="badge">{{ analytics.count_of_test_case_types_by_mission_week|first|first }}</span>
             {% else %}
-            <table class="table  table-responsive">
-                <thead>
-                    <tr>
-                        <th>&nbsp;</th>
-                        {% for i in analytics.count_of_test_case_types_by_mission_week|first|slice:"1:" %}
-                            <th>Week {{ forloop.counter }}</th>
-                        {% endfor %}
-                    </tr>
-                </thead>
-                <tbody>
-                    {% for row in analytics.count_of_test_case_types_by_mission_week %}
+                <table class="table  table-responsive">
+                    <thead>
                         <tr>
-                            {% for col in row %}
-                                <td>{{ col }}</td>
+                            <th>&nbsp;</th>
+                            {% for i in analytics.count_of_test_case_types_by_mission_week|first|slice:"1:" %}
+                                <th>Week {{ forloop.counter }}</th>
                             {% endfor %}
                         </tr>
-                    {% endfor %}
-                </tbody>
-            </table>
+                    </thead>
+                    <tbody>
+                        {% for row in analytics.count_of_test_case_types_by_mission_week %}
+                            <tr>
+                                {% for col in row %}<td>{{ col }}</td>{% endfor %}
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
             {% endif %}
         </li>
     </ul>
-  {% else %}
-  <p>I'm sure you meant to add some test cases to your report before you clicked me.</p>
-  <p>Don't worry, I won't tell the others.</p>
-  {% endif %}
-  
+{% else %}
+    <p>I'm sure you meant to add some test cases to your report before you clicked me.</p>
+    <p>Don't worry, I won't tell the others.</p>
+{% endif %}

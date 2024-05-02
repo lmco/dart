@@ -26,26 +26,23 @@
     {% endif %}
 {% endblock %}
 {% block main_heading %}
-<h1 class="page-header">
-    {% if mission.id %}
-        Edit Mission
-    {% else %}
-        Add Mission
-    {% endif %}
-</h1>
+    <h1 class="page-header">
+        {% if mission.id %}
+            Edit Mission
+        {% else %}
+            Add Mission
+        {% endif %}
+    </h1>
 {% endblock %}
-
 {% block content %}
-<form action="{{ action }}" method="POST">
-{% csrf_token %}
-{% bootstrap_form form %}
-{% buttons %}
-    <button type="submit" class="btn btn-primary">
-        {% bootstrap_icon "star" %} Submit
-    </button>
-	{% if mission.id %}
-		<a class="btn btn-danger" href="{% url 'missions-delete' mission.id %}">{% bootstrap_icon "trash" %} Delete</a>
-	{% endif %}
-{% endbuttons %}
+    <form action="{{ action }}" method="POST">
+        {% csrf_token %}
+        {% bootstrap_form form %}
+        {% buttons %}
+        <button type="submit" class="btn btn-primary">{% bootstrap_icon "star" %} Submit</button>
+        {% if mission.id %}
+            <a class="btn btn-danger" href="{% url 'missions-delete' mission.id %}">{% bootstrap_icon "trash" %} Delete</a>
+        {% endif %}
+    {% endbuttons %}
 </form>
 {% endblock %}
