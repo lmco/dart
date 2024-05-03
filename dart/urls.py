@@ -13,7 +13,7 @@
 # limitations under the License.
 #
 
-from django.conf.urls import include, url
+from django.urls import include, re_path
 from django.contrib import admin
 from django.views.generic import RedirectView
 from django.contrib.staticfiles.urls import staticfiles_urlpatterns
@@ -24,84 +24,84 @@ from django.conf import settings
 from django.contrib.auth.views import LoginView, LogoutView
 
 urlpatterns = [
-    url(r"^missions/", include("missions.urls")),
-    url(r"^$", RedirectView.as_view(url="/missions/", permanent=False)),
-    url(r"^admin/", admin.site.urls),
-    url(
+    re_path(r"^missions/", include("missions.urls")),
+    re_path(r"^$", RedirectView.as_view(url="/missions/", permanent=False)),
+    re_path(r"^admin/", admin.site.urls),
+    re_path(
         r"^accounts/logout/$",
         LogoutView.as_view(template_name="login.html"),
         name="logout",
     ),
     # url(r'^accounts/logout/$', logout, name='logout'),
     # url(r'^accounts/login/$', login, {'template_name': 'login.html'}, name='login'),
-    url(
+    re_path(
         r"^accounts/login/$",
         LoginView.as_view(template_name="login.html"),
         name="login",
     ),
-    url(r"^accounts/$", RedirectView.as_view(url="/", permanent=False)),
-    url(r"^accounts/profile/$", RedirectView.as_view(url="/", permanent=False)),
-    url(
+    re_path(r"^accounts/$", RedirectView.as_view(url="/", permanent=False)),
+    re_path(r"^accounts/profile/$", RedirectView.as_view(url="/", permanent=False)),
+    re_path(
         r"^settings/$",
         login_required(missions.views.UpdateDynamicSettingsView.as_view()),
         name="update-settings",
     ),
-    url(
+    re_path(
         r"^settings/business-areas/$",
         login_required(missions.views.BusinessAreaListView.as_view()),
         name="list-business-areas",
     ),
-    url(
+    re_path(
         r"^settings/update-business-area(?:/(?P<pk>\d+))?/$",
         login_required(missions.views.business_area_handler),
         name="update-business-area",
     ),
-    url(
+    re_path(
         r"^settings/classifications/$",
         login_required(missions.views.ClassificationListView.as_view()),
         name="list-classifications",
     ),
-    url(
+    re_path(
         r"^settings/update-classification(?:/(?P<pk>\d+))?/$",
         login_required(missions.views.classification_handler),
         name="update-classification",
     ),
-    url(
+    re_path(
         r"^settings/colors/$",
         login_required(missions.views.ColorListView.as_view()),
         name="list-colors",
     ),
-    url(
+    re_path(
         r"^settings/update-color(?:/(?P<pk>\d+))?/$",
         login_required(missions.views.color_handler),
         name="update-color",
     ),
-    url(
+    re_path(
         r"^settings/create-account/$",
         missions.views.CreateAccountView.as_view(),
         name="create-account",
     ),
-    url(
+    re_path(
         r"^login-interstitial/$",
         login_required(missions.views.LoginInterstitialView.as_view()),
         name="login-interstitial",
     ),
-    url(
+    re_path(
         r"^about/$",
         login_required(missions.views.AboutTemplateView.as_view()),
         name="about",
     ),
-    url(
+    re_path(
         r"^hosts/(?P<host_id>\d+)/$",
         login_required(missions.views.mission_host_handler),
         name="host-detail",
     ),
-    url(
+    re_path(
         r"^data/(?P<supportingdata>\d+)/$",
         login_required(missions.views.DownloadSupportingDataView.as_view()),
         name="data-view",
     ),
-    url(
+    re_path(
         r"^data/(?P<path>.*)$",
         serve,
         {"document_root": settings.MEDIA_ROOT, "show_indexes": False},
