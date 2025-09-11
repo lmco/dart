@@ -1,3 +1,5 @@
+>**Important**: This repository is in a state of dormancy. We're not actively maintaining it, but feel free to explore and use what's here.
+
 # DART: A Documentation and Reporting Tool
 
 DART is a test documentation tool created by the Lockheed Martin Red Team to
