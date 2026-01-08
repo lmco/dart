@@ -1,5 +1,5 @@
 <!--
-# Copyright 2024 Lockheed Martin Corporation
+# Copyright 2026 Lockheed Martin Corporation
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -22,6 +22,14 @@
 >The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/), and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 <hr>
+
+## [v2.1.2] - 2026-01-08
+
+### Changed
+
+* Closed environment installation instructions
+* Dependencies update
+
 
 ## [v2.1.1] - 2024-04-25
 

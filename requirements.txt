@@ -1,4 +1,4 @@
-# Copyright 2024 Lockheed Martin Corporation
+# Copyright 2026 Lockheed Martin Corporation
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -13,6 +13,6 @@
 # limitations under the License.
 #
 
-python-docx==0.8.11
+python-docx>=0.8.11
 django==3.2.25
 django-bootstrap3==21.1.0
