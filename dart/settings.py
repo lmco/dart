@@ -1,4 +1,4 @@
-# Copyright 2024 Lockheed Martin Corporation
+# Copyright 2026 Lockheed Martin Corporation
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -23,7 +23,7 @@
 import os
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
-DART_VERSION_NUMBER = '2.1.1'
+DART_VERSION_NUMBER = '2.1.2'
 
 # SECURITY WARNING
 # We are not randomizing this key for you.

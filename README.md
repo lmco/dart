@@ -1,11 +1,9 @@
->**Important**: This repository is in a state of dormancy. We're not actively maintaining it, but feel free to explore and use what's here.
-
 # DART: A Documentation and Reporting Tool
 
 DART is a test documentation tool created by the Lockheed Martin Red Team to
 document and report on penetration tests, especially in isolated network environments. 
 
-# This works with python 3.9
+# This works with python >=3.9, <3.13
 
 The goals of this tool are:
 
@@ -56,6 +54,7 @@ currently test DART's operation in these configurations.
 
 ### Installation
 
+- [Offline install instructions](docs/closed-env-setup.md)
 - [Local install instructions](docs/local-setup.md)
 - [Docker install instructions](docs/docker-setup.md)
 
@@ -89,4 +88,4 @@ in this tool today.
   handled as export controlled / classified information, as appropriate.
 
 
-&copy; 2024 Lockheed Martin Corporation
+&copy; 2026 Lockheed Martin Corporation
