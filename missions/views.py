@@ -25,7 +25,7 @@ from django.contrib.auth import get_user_model
 from django.core.cache import cache
 from django.core.cache.utils import make_template_fragment_key
 from django.core.paginator import Paginator, PageNotAnInteger, EmptyPage
-from django.core.signing import Signer
+from django.core.signing import BadSignature, Signer
 from django.urls import reverse, reverse_lazy, resolve
 from django.http import HttpResponse
 from django.http.response import JsonResponse
@@ -253,39 +253,59 @@ class ListMissionTestsView(ListView):
 
 
 class OrderMissionTestsView(View):
+    def _parse_reorder_payload(self, request):
+        try:
+            payload = json.loads(request.body.decode('utf-8'))
+        except (ValueError, UnicodeDecodeError) as exc:
+            logger.warning('POST: OrderMissionTestsView received invalid JSON payload')
+            raise ValueError('Invalid JSON payload') from exc
+
+        if 'order' not in payload or not isinstance(payload['order'], list):
+            raise ValueError('Missing or invalid order list')
+
+        if 'server_timestamp' not in payload:
+            raise ValueError('Missing server_timestamp')
+
+        try:
+            raw_timestamp = Signer().unsign(payload['server_timestamp'])
+            float(raw_timestamp)
+        except (BadSignature, ValueError) as exc:
+            logger.warning('POST: OrderMissionTestsView received invalid server_timestamp')
+            raise ValueError('Invalid server_timestamp') from exc
+
+        new_order = []
+        for item in payload['order']:
+            try:
+                new_order.append(int(item))
+            except (TypeError, ValueError) as exc:
+                logger.warning('POST: OrderMissionTestsView received non-int order item: %s', item)
+                raise ValueError('Order items must be integers') from exc
+
+        return new_order
+
     def post(self, request, *args, **kwargs):
         """ Accepts a posted JSON string to specify new test case sort order """
         mission_id = self.kwargs['mission']
-        new_order = []
-
-        # Ensure the received value is just ints
-        try:
-            data = json.loads(request.body)
-            for i in data['order']:
-                new_order.append(int(i))
-        except ValueError:
-            logger.exception('POST: OrderMissionTestsView received non-ints')
-            raise  # Maybe do something else here one day
-
-        # A user with a stale Tests list may override a newer sort order inadvertently
-        # TODO: Add confirmation check if data['server_timestamp'] is older than the last update of the db field
 
         try:
-            tests = TestDetail.objects.filter(mission=self.kwargs['mission'])
-        except TestDetail.DoesNotExist:
-            tests = ()
+            new_order = self._parse_reorder_payload(request)
+        except ValueError as exc:
+            return JsonResponse({'error': str(exc)}, status=BAD_REQUEST)
 
-        # Update mission record with the new order
+        tests = TestDetail.objects.filter(mission=mission_id)
+        valid_test_ids = {test.id for test in tests}
+
+        if not set(new_order).issubset(valid_test_ids):
+            logger.warning('POST: OrderMissionTestsView received invalid test IDs in order list')
+            return JsonResponse({'error': 'Order contains invalid test IDs'}, status=BAD_REQUEST)
+
+        # A user with a stale tests list may override a newer sort order inadvertently.
+        # If the client omitted any current test case IDs, preserve them.
+        for test_id in valid_test_ids:
+            if test_id not in new_order:
+                new_order.append(test_id)
+
         mission = Mission.objects.get(pk=mission_id)
-        current_order = json.loads(mission.testdetail_sort_order)
-
-        # Check to see if new test cases have been created since the page was rendered to this user
-        # if so, just append the missing test cases to the tail end so they don't disappear
-        if len(new_order) < len(current_order):
-            for i in current_order:
-                if i not in new_order:
-                    new_order.append(i)
-
         mission.testdetail_sort_order = json.dumps(new_order)
         mission.save(update_fields=['testdetail_sort_order'])
         rs = ReturnStatus(message="Order Updated")

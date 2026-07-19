@@ -5,6 +5,8 @@ document and report on penetration tests, especially in isolated network environ
 
 # This works with python >=3.9, <3.13
 
+Recommended development interpreter: Python 3.11.
+
 The goals of this tool are:
 
 - __Easy__
