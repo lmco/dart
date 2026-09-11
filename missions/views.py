@@ -15,6 +15,7 @@
 
 import json
 import logging
+import mimetypes
 import time
 from calendar import timegm
 from http.client import BAD_REQUEST, NOT_ACCEPTABLE
@@ -27,7 +28,8 @@ from django.core.cache.utils import make_template_fragment_key
 from django.core.paginator import Paginator, PageNotAnInteger, EmptyPage
 from django.core.signing import Signer
 from django.urls import reverse, reverse_lazy, resolve
-from django.http import HttpResponse
+from django.db.models import F
+from django.http import HttpResponse, HttpResponseRedirect
 from django.http.response import JsonResponse
 from django.shortcuts import redirect
 from django.utils.html import conditional_escape
@@ -35,13 +37,52 @@ from django.utils.timezone import now
 from django.views.decorators.http import require_http_methods
 from django.views.generic import TemplateView, ListView, CreateView, UpdateView, View, DeleteView
 
+from .extras.audit import log_change
 from .extras.helpers.analytics import MissionAnalytics
 from .extras.helpers.sorters import TestSortingHelper
+from .extras.package import export_mission_json
 from .extras.utils import ReturnStatus, generate_report_or_attachments
 from .models import Mission, TestDetail, SupportingData, DARTDynamicSettings, Host, BusinessArea, \
-    ClassificationLegend, Color
+    ClassificationLegend, Color, ChangeLog
 
 logger = logging.getLogger(__name__)
+
+
+def _render_version_conflict(view, form, version_field='version'):
+    """
+    Optimistic-lock check for editable forms.
+
+    If the stored version of ``view``'s object is newer than the version the submitted
+    form was rendered with, someone else saved in the meantime. Return a re-rendered
+    response bound to the FRESH instance (so the user sees current values and the latest
+    version) with a warning; otherwise return None so the caller proceeds to save.
+    """
+    current = view.get_object()
+    try:
+        submitted = int(view.request.POST.get(version_field, 0) or 0)
+    except (TypeError, ValueError):
+        submitted = 0
+
+    if current.version > submitted:
+        logger.info(
+            'Version conflict on %s pk=%s (stored=%s submitted=%s) by user=%s',
+            type(current).__name__, current.pk, current.version, submitted,
+            view.request.user.username if view.request.user.is_authenticated else '<anon>',
+        )
+        messages.warning(
+            view.request,
+            'This record was modified by someone else while you were editing. '
+            'Your changes were NOT saved. Review the current values and re-submit.',
+        )
+        # Rebind to the fresh instance so the page shows the latest data + version.
+        form = view.get_form_class()(instance=current)
+        return view.render_to_response(view.get_context_data(form=form))
+    return None
+
+
+def _bump_version(instance):
+    """Increment the optimistic-lock version without re-triggering save()."""
+    type(instance).objects.filter(pk=instance.pk).update(version=F('version') + 1)
 
 
 class UpdateDynamicSettingsView(UpdateView):
@@ -64,8 +105,8 @@ class UpdateDynamicSettingsView(UpdateView):
         legend_bottom_key = make_template_fragment_key('legend_partial_bottom')
         cache.delete(legend_bottom_key)
 
-        # Delete cached data for the host format string
-        cache.delete('host_output_format_string')
+        # Drop the memoized host output format string so hosts render with the new format
+        Host.invalidate_host_output_format_cache()
 
         return super(UpdateDynamicSettingsView, self).post(request, *args, **kwargs)
 
@@ -123,6 +164,11 @@ class CreateMissionView(CreateView):
         'customer_notes_include_flag',
     ]
 
+    def form_valid(self, form):
+        self.object = form.save()
+        log_change(request=self.request, mission=self.object, action='created')
+        return HttpResponseRedirect(self.get_success_url())
+
     def get_success_url(self):
         logger.debug('Created mission {mission_id}'.format(mission_id=self.object.id))
         return reverse('missions-list')
@@ -169,10 +215,22 @@ class EditMissionView(UpdateView):
         logger.debug('POST: EditMissionView (Saved {mission_id})'.format(mission_id=self.object.id))
         return reverse('missions-list')
 
+    def form_valid(self, form):
+        conflict = _render_version_conflict(self, form)
+        if conflict:
+            return conflict
+        self.object = form.save()
+        _bump_version(self.object)
+        log_change(request=self.request, mission=self.object, action='updated')
+        return HttpResponseRedirect(self.get_success_url())
+
     def get_context_data(self, **kwargs):
         logger.debug('GET: EditMissionView (Edit {mission_id})'.format(mission_id=self.get_object().id))
         context = super(EditMissionView, self).get_context_data(**kwargs)
         context['action'] = reverse('missions-edit', kwargs={'pk': self.get_object().id})
+        context['mission_changelogs'] = ChangeLog.objects.filter(
+            mission=self.get_object()
+        ).select_related('user').order_by('-timestamp')[:25]
         return context
 
 
@@ -184,6 +242,13 @@ class DeleteMissionView(DeleteView):
         logger.debug('GET: DeleteMissionView (Confirm delete {mission_id})'
                      .format(mission_id=self.object.id))
         return super(DeleteMissionView, self).get_context_data(**kwargs)
+
+    def delete(self, request, *args, **kwargs):
+        # Log before actually deleting so we still have the pk/name
+        mission = self.get_object()
+        log_change(request=request, mission=mission, action='deleted',
+                   description='Deleted mission "%s"' % mission.mission_name)
+        return super(DeleteMissionView, self).delete(request, *args, **kwargs)
 
     def get_success_url(self):
         logger.debug('POST: DeleteMisisonView (Deleted {mission_id})'.format(mission_id=self.object.id))
@@ -201,9 +266,10 @@ class ReportMissionView(View):
         io_stream, name = generate_report_or_attachments(mission_id, zip_attachments=False)
         docx_name = name + "_" + str(mission_id)
 
-        response= HttpResponse(io_stream.getvalue(), content_type='text/plain')
+        response = HttpResponse(
+            io_stream.getvalue(),
+            content_type='application/vnd.openxmlformats-officedocument.wordprocessingml.document')
         response['Content-Disposition'] = 'attachment; filename={}_mission_report.docx'.format(docx_name)
-        #response['Content-Disposition'] = 'attachment; filename={}_mission_report.zip'.format(mission_id)
         return response
 
 
@@ -220,6 +286,25 @@ class ReportAttachmentsMissionView(View):
 
         response = HttpResponse(io_stream.getvalue(), content_type='application/octet-stream')
         response['Content-Disposition'] = 'attachment; filename={}_supporting_data.zip'.format(zip_name)
+        return response
+
+
+class ExportMissionView(View):
+    """Downloads the mission structure as a portable JSON "package"."""
+
+    def get(self, request, *args, **kwargs):
+        mission_id = kwargs.get('mission')
+        mission = Mission.objects.get(id=mission_id)
+
+        logger.debug('GET: ExportMissionView ({mission_id})'.format(mission_id=mission_id))
+
+        payload = export_mission_json(mission)
+        safe_name = mission.mission_name.strip().replace('/', '-')
+        response = HttpResponse(
+            payload,
+            content_type='application/json; charset=utf-8')
+        response['Content-Disposition'] = 'attachment; filename={}_{}_mission_export.json'.format(
+            safe_name, mission_id)
         return response
 
 
@@ -312,8 +397,79 @@ class CloneMissionTestView(View):
         test_case.test_case_status = 'NEW'
         test_case.save()
 
+        log_change(request=request, test_detail=test_case,
+                   mission=test_case.mission, action='cloned',
+                   description='Cloned from test case #%s' % id_to_clone)
+
         return HttpResponse(reverse_lazy('mission-test-edit',
                             kwargs={'mission': test_case.mission.id, 'pk': test_case.pk}))
+
+
+class CloneMissionView(View):
+    """Deep-copies a whole mission: hosts, test cases, and supporting-data records."""
+
+    def get(self, request, *args, **kwargs):
+        source_mission = Mission.objects.get(pk=self.kwargs['pk'])
+
+        # ---- Mission (new pk/version; copy every other scalar) ----
+        new_mission = Mission.objects.create(
+            **{f.name: getattr(source_mission, f.name)
+               for f in Mission._meta.fields if f.name not in ('id', 'version')}
+        )
+        new_mission.mission_name = source_mission.mission_name + ' (Clone)'
+        new_mission.testdetail_sort_order = '[]'
+        new_mission.save(update_fields=['mission_name', 'testdetail_sort_order'])
+
+        # ---- Hosts ----
+        host_map = {}  # old host id -> new host id
+        for host in source_mission.host_set.all():
+            new_host = Host.objects.create(
+                **{f.name: getattr(host, f.name)
+                   for f in Host._meta.fields if f.name not in ('id', 'mission')}
+            )
+            new_host.mission = new_mission
+            new_host.save()
+            host_map[host.id] = new_host.id
+
+        # ---- Tests ----
+        test_map = {}  # old test id -> new test id
+        source_order = json.loads(source_mission.testdetail_sort_order or '[]')
+        for old_test in TestDetail.objects.filter(mission=source_mission):
+            test_scalars = {f.name: getattr(old_test, f.name)
+                            for f in TestDetail._meta.fields
+                            if f.name not in ('id', 'version', 'mission',
+                                              'source_hosts', 'target_hosts')}
+            test_scalars['test_case_status'] = 'NEW'
+            test_scalars['supporting_data_sort_order'] = '[]'
+            new_test = TestDetail.objects.create(mission=new_mission, **test_scalars)
+
+            # M2M after both hosts + this test exist
+            new_test.source_hosts.set(host_map[h.id] for h in old_test.source_hosts.all() if h.id in host_map)
+            new_test.target_hosts.set(host_map[h.id] for h in old_test.target_hosts.all() if h.id in host_map)
+
+            # Supporting data (files already on disk under MEDIA_ROOT; link new records)
+            for sd in old_test.supportingdata_set.all():
+                SupportingData.objects.create(
+                    test_detail=new_test,
+                    caption=sd.caption,
+                    include_flag=sd.include_flag,
+                    test_file=sd.test_file.name,
+                )
+
+            test_map[old_test.id] = new_test.id
+
+        # ---- Rebuild mission test order (old -> new where present) ----
+        new_order = [test_map[i] for i in source_order if i in test_map]
+        # Include any tests not present in the source order (defensive)
+        new_order += [v for k, v in test_map.items() if v not in new_order]
+        new_mission.testdetail_sort_order = json.dumps(new_order)
+        new_mission.save(update_fields=['testdetail_sort_order'])
+
+        log_change(request=request, mission=new_mission, action='cloned',
+                   description='Cloned from mission "%s" (#%s)' % (
+                       source_mission.mission_name, source_mission.pk))
+
+        return redirect('missions-edit', pk=new_mission.pk)
 
 
 class DeleteMissionTestView(DeleteView):
@@ -325,6 +481,12 @@ class DeleteMissionTestView(DeleteView):
         context['this_mission'] = Mission.objects.get(id=self.kwargs['mission'])
         context['test_id'] = self.kwargs['pk']
         return context
+
+    def delete(self, request, *args, **kwargs):
+        test = self.get_object()
+        log_change(request=request, test_detail=test, mission=test.mission, action='deleted',
+                   description='Deleted test case "%s"' % test.test_objective)
+        return super(DeleteMissionTestView, self).delete(request, *args, **kwargs)
 
     def get_success_url(self):
         return reverse('mission-tests', kwargs={'mission': self.kwargs['mission']})
@@ -379,7 +541,10 @@ class CreateMissionTestView(CreateView):
 
     def form_valid(self, form):
         form.instance.mission_id = self.kwargs['mission']
-        return super(CreateMissionTestView, self).form_valid(form)
+        self.object = form.save()
+        log_change(request=self.request, test_detail=self.object,
+                   mission=self.object.mission, action='created')
+        return HttpResponseRedirect(self.get_success_url())
 
 
 class EditMissionTestView(UpdateView):
@@ -422,12 +587,26 @@ class EditMissionTestView(UpdateView):
     def get_success_url(self):
         return reverse('mission-tests', kwargs={'mission': self.kwargs['mission']})
 
+    def form_valid(self, form):
+        conflict = _render_version_conflict(self, form)
+        if conflict:
+            return conflict
+        self.object = form.save()
+        _bump_version(self.object)
+        log_change(request=self.request, test_detail=self.object,
+                   mission=self.object.mission, action='updated')
+        return HttpResponseRedirect(self.get_success_url())
+
     def get_context_data(self, **kwargs):
         context = super(EditMissionTestView, self).get_context_data(**kwargs)
         context['action'] = reverse('mission-test-edit', kwargs={'pk': self.get_object().id,
                                                                  'mission': self.kwargs['mission']})
         mission_model = Mission.objects.get(id=self.kwargs['mission'])
         context['this_mission'] = mission_model
+
+        context['test_changelogs'] = ChangeLog.objects.filter(
+            test_detail=self.get_object()
+        ).select_related('user').order_by('-timestamp')[:25]
 
         context['display_navbar_save_button'] = True
         context['is_read_only'] = resolve(self.request.path_info).url_name == 'mission-test-view'
@@ -565,7 +744,9 @@ class DownloadSupportingDataView(View):
             supporting_data_object.save()
 
         filename = supporting_data_object.filename()
-        response = HttpResponse(supporting_data_object.test_file.file, content_type='text/plain')
+        response = HttpResponse(
+            supporting_data_object.test_file.file,
+            content_type=mimetypes.guess_type(filename)[0] or 'application/octet-stream')
         response['Content-Disposition'] = 'attachment; filename=%s' % filename
         return response
 
@@ -682,10 +863,15 @@ def mission_host_handler(request, host_id):
                         return JsonResponse(ReturnStatus(False, error_message).to_dict())
 
                 try:
+                    was_new = host.pk is None
                     host.host_name = data['host_name']
                     host.ip_address = data['ip_address']
                     host.is_no_hit = data['is_no_hit']
                     host.save()
+                    # Audit the host add/update against its mission
+                    action = 'host_added' if was_new else 'host_updated'
+                    log_change(request=request, mission=host.mission, action=action,
+                               description='Host %s (%s)' % (data.get('host_name', ''), data.get('ip_address', '')))
                     logger.debug('Host update POST saved host.')
                     return JsonResponse(ReturnStatus(message='OK', data={'pk': host.pk}).to_dict())
                 except KeyError:
@@ -721,6 +907,8 @@ def mission_host_handler(request, host_id):
                 status = ReturnStatus(False, error_message)
                 return JsonResponse(status.to_dict(), status=NOT_ACCEPTABLE)
             else:
+                log_change(request=request, mission=host.mission, action='host_deleted',
+                           description='Host %s (%s)' % (host.host_name, host.ip_address))
                 host.delete()
                 return JsonResponse(ReturnStatus(message='OK', data={"pk": host_id}).to_dict())
         except Host.DoesNotExist:

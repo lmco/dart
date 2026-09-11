@@ -51,10 +51,21 @@
                 <a href="{% url 'mission-tests' mission=m.id %}">{% bootstrap_icon "stats" %} Test Cases</a><br />
                 <a href="{% url 'mission-hosts' mission_id=m.id %}">{% bootstrap_icon "hdd" %} Mission Hosts</a><br />
                 <a href="{% url 'mission-report' mission=m.id %}">{% bootstrap_icon "file" %} Generate Report</a><br />
-                <a href="{% url 'mission-attachments' mission=m.id %}">{% bootstrap_icon "gift" %} Generate Data Package</a>
+                <a href="{% url 'mission-attachments' mission=m.id %}">{% bootstrap_icon "gift" %} Generate Data Package</a><br />
+                <a href="{% url 'mission-export' mission=m.id %}">{% bootstrap_icon "download" %} Export</a><br />
+                <a href="{% url 'missions-clone' pk=m.id %}" class="clone-mission-link" data-name="{{ m.mission_name }}">{% bootstrap_icon "copy" %} Clone</a>
             </td>
         </tr>
     {% endfor %}
 </table>
     {% bootstrap_pagination missions size="medium" %}
+
+<script type="text/javascript">
+$('.clone-mission-link').on('click', function(event) {
+    var name = $(this).data('name');
+    if (!confirm('Clone mission "' + name + '"? The new mission will include the same hosts and test cases.')) {
+        event.preventDefault();
+    }
+});
+</script>
 {% endblock %}

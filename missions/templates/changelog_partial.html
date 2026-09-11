@@ -1,0 +1,43 @@
+{% comment %}
+<!--
+# Copyright 2026 Lockheed Martin Corporation
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+# http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+#
+-->
+{% endcomment %}
+{% load bootstrap3 %}
+
+<div class="panel panel-default">
+    <div class="panel-heading">
+        <h3 class="panel-title">{{ title|default:"History" }}</h3>
+    </div>
+    <div class="panel-body" style="max-height: 300px; overflow-y: auto;">
+        {% if changelogs %}
+            <ul class="list-unstyled">
+                {% for log in changelogs %}
+                    <li class="list-group-item">
+                        <span class="text-muted">{{ log.timestamp|date:"M d, Y H:i" }}</span> &middot;
+                        <strong>{{ log.user|default:"Unknown" }}</strong> &middot;
+                        {{ log.action }}
+                        {% if log.description %}
+                            <br /><small>{{ log.description }}</small>
+                        {% endif %}
+                    </li>
+                {% endfor %}
+            </ul>
+        {% else %}
+            <p class="text-muted">No history yet.</p>
+        {% endif %}
+    </div>
+</div>

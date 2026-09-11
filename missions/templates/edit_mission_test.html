@@ -87,6 +87,9 @@
 
 <form id="test-case-form" action="{{ action }}" method="POST" autocomplete="off" class="navbar-submittable-form">
 {% csrf_token %}
+{% if form.instance.pk %}
+    <input type="hidden" name="version" value="{{ form.instance.version }}">
+{% endif %}
 
     {% for field in form %}
         {% bootstrap_field field %}
@@ -164,5 +167,9 @@
         });
     });
 </script>
+
+{% if test_changelogs %}
+    {% include 'changelog_partial.html' with changelogs=test_changelogs title="Test Case History" %}
+{% endif %}
 
 {% endblock %}

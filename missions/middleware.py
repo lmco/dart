@@ -18,17 +18,15 @@ import re
 import logging
 
 from django.conf import settings
-from django.core.urlresolvers import reverse_lazy
 from django.shortcuts import redirect
+from django.urls import reverse_lazy
+from django.utils.deprecation import MiddlewareMixin
 from django.utils.timezone import timedelta, now
-from django.contrib.auth import login
-from django.contrib.auth.models import User
-from django.http.response import HttpResponseServerError
 
 logger = logging.getLogger(__name__)
 
 
-class RequiredInterstitial(object):
+class RequiredInterstitial(MiddlewareMixin):
     """
     Some organizations may require an acceptable use policy or similar to be displayed upon logon,
     the setting REQUIRED_INTERSTITIAL_DISPLAY_INTERVAL will specify how often the AUP should be displayed
@@ -37,7 +35,7 @@ class RequiredInterstitial(object):
     Omitting this setting will bypass the interstitial.
 
     To Use:
-    - Add to settings.MIDDLEWARE_CLASSES: 'missions.middleware.RequiredInterstitial'
+    - Add to settings.MIDDLEWARE: 'missions.middleware.RequiredInterstitial'
     - Ensure you specify a value in settings for the key REQUIRED_INTERSTITIAL_DISPLAY_INTERVAL
     """
 

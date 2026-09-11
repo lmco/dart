@@ -13,6 +13,7 @@
 # limitations under the License.
 #
 
+import logging
 import os
 
 from django.core.cache import cache
@@ -25,6 +26,8 @@ from django.conf import settings
 
 from .extras.helpers.formatters import join_as_compacted_paragraphs
 from .extras.validators import validate_host_format_string
+
+logger = logging.getLogger(__name__)
 
 
 """
@@ -213,6 +216,15 @@ class Mission(models.Model):
         default="[]"
     )
 
+    # Optimistic-concurrency guard. Incremented on every successful edit via the
+    # UpdateViews (NOT in save(), so reorder/clone/import saves don't bump it).
+    # Form posts carry the version they were rendered with; if the stored value is
+    # greater, another editor saved in the meantime and we warn instead of clobbering.
+    version = models.IntegerField(
+        default=0,
+        verbose_name="Version",
+    )
+
     def __str__(self):
         return "%s (%s)" % (self.mission_name, self.mission_number)
 
@@ -238,20 +250,38 @@ class Host(models.Model):
         default=False,
     )
 
-    @staticmethod
-    def get_host_output_format_string():
-        format_string = str(DARTDynamicSettings.objects.get_as_object().host_output_format)
-        return format_string
+    # The format string used to render a Host's display value is resolved from the
+    # DARTDynamicSettings singleton. It is memoized on the class to avoid a DB hit
+    # (and a stale 5-minute cache) on every stringification of a Host, much of which
+    # happens on list pages. If the dynamic settings row has not been seeded yet, fall
+    # back to a safe default so host rendering never raises.
+    _host_output_format_string = None
+
+    @classmethod
+    def get_host_output_format_string(cls):
+        if cls._host_output_format_string is None:
+            try:
+                format_string = str(DARTDynamicSettings.objects.get_as_object().host_output_format)
+            except (DARTDynamicSettings.DoesNotExist, AttributeError):
+                # Settings missing or not yet seeded; fall back to the model default
+                # so host display never crashes the app.
+                logger.warning('DARTDynamicSettings missing/unseeded; using default host output format string.')
+                format_string = DARTDynamicSettings._meta.get_field('host_output_format').default
+            cls._host_output_format_string = format_string
+        return cls._host_output_format_string
+
+    @classmethod
+    def invalidate_host_output_format_cache(cls):
+        """Force re-resolution of the host output format string on next use."""
+        cls._host_output_format_string = None
 
     def __str__(self):
-        format_string = cache.get('host_output_format_string')
-        if format_string is None:
-            cache.set('host_output_format_string', Host.get_host_output_format_string(), 300)
-            format_string = cache.get('host_output_format_string')
+        format_string = Host.get_host_output_format_string()
         return format_string.format(name=self.host_name, ip=self.ip_address)
 
     def get_absolute_url(self):
-        return
+        # Point at the mission's hosts page (the "Edit Mission Hosts" view)
+        return reverse_lazy('mission-hosts', kwargs={'mission_id': self.mission.pk})
 
 
 class TestDetail(models.Model):
@@ -491,6 +521,12 @@ class TestDetail(models.Model):
         default="[]"
     )
 
+    # Optimistic-concurrency guard; see the Mission.version comment.
+    version = models.IntegerField(
+        default=0,
+        verbose_name="Version",
+    )
+
     def count_of_supporting_data(self):
         return len(SupportingData.objects.filter(test_detail=self.pk))
 
@@ -628,6 +664,61 @@ class DARTDynamicSettings(models.Model):
     # Since we're treating Dynamic Settings as a singleton,
     # override the default manager to enforce this
     objects = DARTDynamicSettingsManager()
+
+
+class ChangeLog(models.Model):
+    """
+    Immutable record of who changed a mission/test case and when.
+
+    DART has no RBAC (any authenticated user can edit anything), so this trail is the
+    only way to reconstruct who did what during an engagement. Rows are written
+    explicitly from the create/update/delete/clone views and the import command (signals
+    can't see the requesting user); they are never modified after creation.
+    """
+
+    # on_delete=SET_NULL (not CASCADE) so the audit trail survives the parent's
+    # deletion — otherwise the "deleted" record itself would be wiped by the cascade.
+    mission = models.ForeignKey(
+        Mission,
+        null=True,
+        blank=True,
+        related_name='changelogs',
+        on_delete=models.SET_NULL,
+    )
+
+    test_detail = models.ForeignKey(
+        TestDetail,
+        null=True,
+        blank=True,
+        related_name='changelogs',
+        on_delete=models.SET_NULL,
+    )
+
+    user = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        null=True,
+        blank=True,
+        on_delete=models.SET_NULL,
+    )
+
+    action = models.CharField(
+        max_length=50,
+    )
+
+    description = models.TextField(
+        blank=True,
+    )
+
+    timestamp = models.DateTimeField(
+        default=timezone.now,
+    )
+
+    def __str__(self):
+        return '{timestamp} {user} {action}'.format(
+            timestamp=self.timestamp,
+            user=self.user or '<unknown>',
+            action=self.action,
+        )
 
 
 # Catch deletions of supporting data records and remove the associated file

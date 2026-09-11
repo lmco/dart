@@ -614,10 +614,18 @@ def generate_report_or_attachments(mission_id, zip_attachments=False):
     replace_document_slugs(document)
     name = mission.mission_name
     if zip_attachments:
-        zip_file = shutil.make_archive(mission_data_dir, 'zip', mission_data_dir)
-        with open(mission_data_dir + '.zip', 'rb') as f:
-            return io.BytesIO(f.read()), name
-
+        try:
+            shutil.make_archive(mission_data_dir, 'zip', mission_data_dir)
+            with open(mission_data_dir + '.zip', 'rb') as f:
+                return io.BytesIO(f.read()), name
+        finally:
+            # The mission_data_dir and its .zip are transient artifacts produced only
+            # to serve the download; remove them so repeated report runs don't leave a
+            # growing pile of SUPPORTING_DATA_PACKAGE snapshots behind.
+            shutil.rmtree(mission_data_dir, ignore_errors=True)
+            zip_path = mission_data_dir + '.zip'
+            if os.path.isfile(zip_path):
+                os.remove(zip_path)
     else:
         stream = BytesIO()
         document.save(stream)

@@ -53,6 +53,7 @@ MIDDLEWARE = (
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'missions.middleware.RequiredInterstitial',
 )
 
 DEBUG=True
@@ -167,5 +168,8 @@ DEFAULT_AUTO_FIELD = 'django.db.models.AutoField'
 # the setting REQUIRED_INTERSTITIAL_DISPLAY_INTERVAL will specify how often the AUP should be displayed
 # in hours as a positive integer or 0 to indicate it should be displayed once per application logon.
 # Omitting this setting will bypass the interstitial.
+#
+# The corresponding middleware (missions.middleware.RequiredInterstitial) is enqueued in MIDDLEWARE
+# above; it is a no-op until REQUIRED_INTERSTITIAL_DISPLAY_INTERVAL is set.
 #
 #REQUIRED_INTERSTITIAL_DISPLAY_INTERVAL = 0  # In hours, or 0 for once per login

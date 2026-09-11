@@ -38,6 +38,9 @@
 {% block content %}
 <form action="{{ action }}" method="POST">
 {% csrf_token %}
+{% if form.instance.pk %}
+    <input type="hidden" name="version" value="{{ form.instance.version }}">
+{% endif %}
 {% bootstrap_form form %}
 {% buttons %}
     <button type="submit" class="btn btn-primary">
@@ -48,4 +51,8 @@
 	{% endif %}
 {% endbuttons %}
 </form>
+
+{% if form.instance.pk %}
+    {% include 'changelog_partial.html' with changelogs=mission_changelogs title="Mission History" %}
+{% endif %}
 {% endblock %}
