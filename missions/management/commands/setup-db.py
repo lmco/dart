@@ -53,12 +53,12 @@ if len(seed_data) and seed_data.strip().upper()[0] == 'Y':
     subprocess.call([PYTHON_INTERPRETER, MANAGER,
                     "loaddata", "common_bas"])
 
-add_user = input("\nDo you want add a super user? [y/N]")
+add_user = input("\nDo you want to add a super user? [y/N]")
 while len(add_user) and add_user.strip().upper()[0] == 'Y':
     subprocess.call([PYTHON_INTERPRETER, MANAGER,
                     "createsuperuser"])
 
-    add_user = input("\nDo you want add a user? [y/N]")
+    add_user = input("\nDo you want to add a user? [y/N]")
 
 print("Exiting...")
 

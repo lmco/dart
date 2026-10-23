@@ -121,7 +121,7 @@ class TestSortingHelper(object):
             testdetail_model.save(update_fields=['supporting_data_sort_order'])
             logger.info('Reconciliation Performed (TestDetail %s): '
                         'TestDetail Supporting Data Sort Order: %s; '
-                        'Suppporting Data from Database: %s; '
+                        'Supporting Data from Database: %s; '
                         'Result of Deconflict: %s' % (testdetail_id, sort_order, data_ids_from_db, deconflicted_sort_order))
 
         return deconflicted_sort_order
