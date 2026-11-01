@@ -17,7 +17,7 @@ ARG BASE_IMAGE=python
 ARG BASE_TAG=3.11.0-alpine3.16
 FROM $BASE_IMAGE:$BASE_TAG
 
-LABEL maintainer Lockheed Martin Red Team
+LABEL maintainer="Lockheed Martin Red Team"
 
 ARG PIP_TRUSTED_HOSTS="--trusted-host pypi.python.org --trusted-host pypi.org --trusted-host files.pythonhosted.org"
 
