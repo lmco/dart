@@ -23,6 +23,14 @@
 
 <hr>
 
+## [Unreleased]
+
+### Fixed
+
+* Install on Python 3.13+ (`legacy-cgi` and `standard-imghdr` backports for Django 3.2)
+* Quoted Dockerfile maintainer label
+
+
 ## [v2.1.2] - 2026-01-08
 
 ### Changed
